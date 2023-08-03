@@ -41,7 +41,11 @@ internal class TITAN : Photon.MonoBehaviour
 
 	private int attackCount;
 
-	public float attackDistance = 13f;
+	public List<string> _ignoreLookTargetAnimations;
+	public List<string> _fastHeadRotationAnimations;
+
+
+    public float attackDistance = 13f;
 
 	private bool attacked;
 
@@ -240,9 +244,6 @@ internal class TITAN : Photon.MonoBehaviour
 
 	private bool _hasRunStart;
 
-	private HashSet<string> _ignoreLookTargetAnimations;
-
-	private HashSet<string> _fastHeadRotationAnimations;
 
 	private bool _ignoreLookTarget;
 
@@ -568,9 +569,9 @@ internal class TITAN : Photon.MonoBehaviour
 		baseRigidBody.freezeRotation = true;
 		baseRigidBody.useGravity = false;
 		_customSkinLoader = base.gameObject.AddComponent<TitanCustomSkinLoader>();
-		_ignoreLookTargetAnimations = new HashSet<string> { "sit_hunt_down", "hit_eren_L", "hit_eren_R", "idle_recovery", "eat_l", "eat_r", "sit_hit_eye", "hit_eye" };
-		_fastHeadRotationAnimations = new HashSet<string> { "hit_eren_L", "hit_eren_R", "sit_hit_eye", "hit_eye" };
-		foreach (AnimationState item in base.animation)
+        _ignoreLookTargetAnimations = new List<string> { "sit_hunt_down", "hit_eren_L", "hit_eren_R", "idle_recovery", "eat_l", "eat_r", "sit_hit_eye", "hit_eye" };
+        _fastHeadRotationAnimations = new List<string> { "hit_eren_L", "hit_eren_R", "sit_hit_eye", "hit_eye" };
+        foreach (AnimationState item in base.animation)
 		{
 			if (item.name.StartsWith("attack_"))
 			{

@@ -22,7 +22,7 @@ public class BMSymbol
 
 	private int mWidth;
 
-	public string sequence;
+	public string sequence = "";
 
 	public string spriteName;
 
