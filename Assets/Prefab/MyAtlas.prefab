@@ -1,0 +1,1003 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &100100000
+Prefab:
+  serializedVersion: 2
+  m_ObjectHideFlags: 1
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications: []
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 0}
+  m_RootGameObject: {fileID: 1130449545387724}
+  m_IsPrefabParent: 1
+  m_IsExploded: 0
+--- !u!1 &1130449545387724
+GameObject:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_Component:
+  - 4: {fileID: 4493669395525177}
+  - 114: {fileID: 114545857489073028}
+  m_Layer: 0
+  m_Name: MyAtlas
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4493669395525177
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1130449545387724}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+--- !u!114 &114545857489073028
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1130449545387724}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03f7db9a480b403690a4a83220213122, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  material: {fileID: 2100000, guid: cfb4a653a9b263742b2e7ff61f8bc30a, type: 2}
+  sprites:
+    Array:
+    - name: numberSize20_0
+      outer:
+        x: 1939
+        y: 1758
+        width: 62
+        height: 53
+      inner:
+        x: 1939
+        y: 1758
+        width: 62
+        height: 53
+      rotated: 0
+      paddingLeft: 0
+      paddingRight: 0.032258064
+      paddingTop: 0
+      paddingBottom: 0.20754717
+    - name: hitscore48_0
+      outer:
+        x: 1903
+        y: 1457
+        width: 113
+        height: 58
+      inner:
+        x: 1903
+        y: 1457
+        width: 113
+        height: 58
+      rotated: 0
+      paddingLeft: 0
+      paddingRight: 0.13274336
+      paddingTop: 0
+      paddingBottom: 1.2068965
+    - name: HUD_font_0
+      outer:
+        x: 1811
+        y: 1730
+        width: 127
+        height: 81
+      inner:
+        x: 1811
+        y: 1730
+        width: 127
+        height: 81
+      rotated: 0
+      paddingLeft: 0
+      paddingRight: 0.007874016
+      paddingTop: 0
+      paddingBottom: 0.5802469
+    - name: ui_skill_jean
+      outer:
+        x: 1772
+        y: 1452
+        width: 32
+        height: 32
+      inner:
+        x: 1772
+        y: 1452
+        width: 32
+        height: 32
+      rotated: 0
+      paddingLeft: 0
+      paddingRight: 0
+      paddingTop: 0
+      paddingBottom: 0
+    - name: cross_a
+      outer:
+        x: 1197
+        y: 1448
+        width: 9
+        height: 15
+      inner:
+        x: 1197
+        y: 1448
+        width: 9
+        height: 15
+      rotated: 0
+      paddingLeft: 0
+      paddingRight: 0
+      paddingTop: 0
+      paddingBottom: 0
+    - name: ui_skill_fill_btm
+      outer:
+        x: 2009
+        y: 1815
+        width: 32
+        height: 32
+      inner:
+        x: 2012
+        y: 1818
+        width: 26
+        height: 26
+      rotated: 0
+      paddingLeft: 0
+      paddingRight: 0
+      paddingTop: 0
+      paddingBottom: 0
+    - name: ui_skill_mikasa
+      outer:
+        x: 2002
+        y: 1738
+        width: 32
+        height: 32
+      inner:
+        x: 2002
+        y: 1738
+        width: 32
+        height: 32
+      rotated: 0
+      paddingLeft: 0
+      paddingRight: 0
+      paddingTop: 0
+      paddingBottom: 0
+    - name: ui_skill_container
+      outer:
+        x: 2009
+        y: 1848
+        width: 32
+        height: 32
+      inner:
+        x: 2012
+        y: 1851
+        width: 26
+        height: 26
+      rotated: 0
+      paddingLeft: 0
+      paddingRight: 0
+      paddingTop: 0
+      paddingBottom: 0
+    - name: cross2_a
+      outer:
+        x: 1207
+        y: 1448
+        width: 9
+        height: 15
+      inner:
+        x: 1207
+        y: 1448
+        width: 9
+        height: 15
+      rotated: 0
+      paddingLeft: 0
+      paddingRight: 0
+      paddingTop: 0
+      paddingBottom: 0
+    - name: ui_skill_armin
+      outer:
+        x: 1939
+        y: 1697
+        width: 32
+        height: 32
+      inner:
+        x: 1939
+        y: 1697
+        width: 32
+        height: 32
+      rotated: 0
+      paddingLeft: 0
+      paddingRight: 0
+      paddingTop: 0
+      paddingBottom: 0
+    - name: cross
+      outer:
+        x: 1939
+        y: 1664
+        width: 32
+        height: 32
+      inner:
+        x: 1939
+        y: 1664
+        width: 32
+        height: 32
+      rotated: 0
+      paddingLeft: 0
+      paddingRight: 0
+      paddingTop: 0
+      paddingBottom: 0
+    - name: ui_blade_fill
+      outer:
+        x: 1517
+        y: 1450
+        width: 5
+        height: 24
+      inner:
+        x: 1517
+        y: 1450
+        width: 5
+        height: 24
+      rotated: 0
+      paddingLeft: 0
+      paddingRight: 0
+      paddingTop: 0
+      paddingBottom: 0
+    - name: ui_gas_can_fill
+      outer:
+        x: 2037
+        y: 1991
+        width: 8
+        height: 28
+      inner:
+        x: 2037
+        y: 1991
+        width: 8
+        height: 28
+      rotated: 0
+      paddingLeft: 0
+      paddingRight: 0
+      paddingTop: 0
+      paddingBottom: 0
+    - name: ui_skill_levi
+      outer:
+        x: 1939
+        y: 1620
+        width: 32
+        height: 32
+      inner:
+        x: 1939
+        y: 1620
+        width: 32
+        height: 32
+      rotated: 0
+      paddingLeft: 0
+      paddingRight: 0
+      paddingTop: 0
+      paddingBottom: 0
+    - name: ui_blade
+      outer:
+        x: 2026
+        y: 1954
+        width: 7
+        height: 32
+      inner:
+        x: 2026
+        y: 1954
+        width: 7
+        height: 32
+      rotated: 0
+      paddingLeft: 0
+      paddingRight: 0
+      paddingTop: 0
+      paddingBottom: 0
+    - name: ui_gas_can
+      outer:
+        x: 2026
+        y: 1987
+        width: 10
+        height: 32
+      inner:
+        x: 2026
+        y: 1987
+        width: 10
+        height: 32
+      rotated: 0
+      paddingLeft: 0
+      paddingRight: 0
+      paddingTop: 0
+      paddingBottom: 0
+    - name: ui_skill_eren
+      outer:
+        x: 2005
+        y: 1697
+        width: 32
+        height: 32
+      inner:
+        x: 2005
+        y: 1697
+        width: 32
+        height: 32
+      rotated: 0
+      paddingLeft: 0
+      paddingRight: 0
+      paddingTop: 0
+      paddingBottom: 0
+    - name: ui_skill_marco
+      outer:
+        x: 1972
+        y: 1697
+        width: 32
+        height: 32
+      inner:
+        x: 1972
+        y: 1697
+        width: 32
+        height: 32
+      rotated: 0
+      paddingLeft: 0
+      paddingRight: 0
+      paddingTop: 0
+      paddingBottom: 0
+    - name: cross2
+      outer:
+        x: 1939
+        y: 1587
+        width: 32
+        height: 32
+      inner:
+        x: 1939
+        y: 1587
+        width: 32
+        height: 32
+      rotated: 0
+      paddingLeft: 0
+      paddingRight: 0
+      paddingTop: 0
+      paddingBottom: 0
+    - name: ui2_1
+      outer:
+        x: 1523
+        y: 1458
+        width: 6
+        height: 16
+      inner:
+        x: 1523
+        y: 1458
+        width: 6
+        height: 16
+      rotated: 0
+      paddingLeft: 0
+      paddingRight: 0
+      paddingTop: 0
+      paddingBottom: 0
+    - name: skill_cd_bottom
+      outer:
+        x: 1451
+        y: 1458
+        width: 16
+        height: 16
+      inner:
+        x: 1451
+        y: 1458
+        width: 16
+        height: 16
+      rotated: 0
+      paddingLeft: 0
+      paddingRight: 0
+      paddingTop: 0
+      paddingBottom: 0
+    - name: ui2_3
+      outer:
+        x: 1217
+        y: 1449
+        width: 4
+        height: 14
+      inner:
+        x: 1217
+        y: 1449
+        width: 4
+        height: 14
+      rotated: 0
+      paddingLeft: 0
+      paddingRight: 0
+      paddingTop: 0
+      paddingBottom: 0
+    - name: ui2_2
+      outer:
+        x: 1530
+        y: 1458
+        width: 4
+        height: 16
+      inner:
+        x: 1530
+        y: 1458
+        width: 4
+        height: 16
+      rotated: 0
+      paddingLeft: 0
+      paddingRight: 0
+      paddingTop: 0
+      paddingBottom: 0
+    - name: ui_skill_petra
+      outer:
+        x: 2005
+        y: 1664
+        width: 32
+        height: 32
+      inner:
+        x: 2005
+        y: 1664
+        width: 32
+        height: 32
+      rotated: 0
+      paddingLeft: 0
+      paddingRight: 0
+      paddingTop: 0
+      paddingBottom: 0
+    - name: ui_skill_sasha
+      outer:
+        x: 1972
+        y: 1664
+        width: 32
+        height: 32
+      inner:
+        x: 1972
+        y: 1664
+        width: 32
+        height: 32
+      rotated: 0
+      paddingLeft: 0
+      paddingRight: 0
+      paddingTop: 0
+      paddingBottom: 0
+    - name: ui_locker
+      outer:
+        x: 1418
+        y: 1448
+        width: 32
+        height: 26
+      inner:
+        x: 1418
+        y: 1448
+        width: 32
+        height: 26
+      rotated: 0
+      paddingLeft: 0
+      paddingRight: 0
+      paddingTop: 0
+      paddingBottom: 0
+    - name: new_logo_2
+      outer:
+        x: 1811
+        y: 1952
+        width: 214
+        height: 96
+      inner:
+        x: 1811
+        y: 1952
+        width: 214
+        height: 96
+      rotated: 0
+      paddingLeft: 0
+      paddingRight: 0
+      paddingTop: 0
+      paddingBottom: 0
+    - name: new_logo_2_logo
+      outer:
+        x: 512
+        y: 1149
+        width: 595
+        height: 298
+      inner:
+        x: 512
+        y: 1149
+        width: 595
+        height: 298
+      rotated: 0
+      paddingLeft: 0
+      paddingRight: 0
+      paddingTop: 0
+      paddingBottom: 0
+    - name: ui_bg
+      outer:
+        x: 961
+        y: 1485
+        width: 849
+        height: 563
+      inner:
+        x: 961
+        y: 1485
+        width: 849
+        height: 563
+      rotated: 0
+      paddingLeft: 0
+      paddingRight: 0
+      paddingTop: 0
+      paddingBottom: 0
+    - name: ui_button_2
+      outer:
+        x: 1811
+        y: 1812
+        width: 197
+        height: 68
+      inner:
+        x: 1811
+        y: 1812
+        width: 197
+        height: 68
+      rotated: 0
+      paddingLeft: 0
+      paddingRight: 0
+      paddingTop: 0
+      paddingBottom: 0
+    - name: ui_button_1
+      outer:
+        x: 1811
+        y: 1881
+        width: 197
+        height: 70
+      inner:
+        x: 1811
+        y: 1881
+        width: 197
+        height: 70
+      rotated: 0
+      paddingLeft: 0
+      paddingRight: 0
+      paddingTop: 0
+      paddingBottom: 0
+    - name: ui_button_3
+      outer:
+        x: 256
+        y: 590
+        width: 125
+        height: 41
+      inner:
+        x: 256
+        y: 590
+        width: 125
+        height: 41
+      rotated: 0
+      paddingLeft: 0
+      paddingRight: 0
+      paddingTop: 0
+      paddingBottom: 0
+    - name: ui_checkbox_mark
+      outer:
+        x: 2002
+        y: 1771
+        width: 40
+        height: 40
+      inner:
+        x: 2002
+        y: 1771
+        width: 40
+        height: 40
+      rotated: 0
+      paddingLeft: 0
+      paddingRight: 0
+      paddingTop: 0
+      paddingBottom: 0
+    - name: ui_button_pgDn
+      outer:
+        x: 1678
+        y: 1450
+        width: 47
+        height: 34
+      inner:
+        x: 1678
+        y: 1450
+        width: 47
+        height: 34
+      rotated: 0
+      paddingLeft: 0
+      paddingRight: 0
+      paddingTop: 0
+      paddingBottom: 0
+    - name: ui_common_bg
+      outer:
+        x: 1811
+        y: 1497
+        width: 91
+        height: 89
+      inner:
+        x: 1821
+        y: 1507
+        width: 71
+        height: 69
+      rotated: 0
+      paddingLeft: 0
+      paddingRight: 0
+      paddingTop: 0
+      paddingBottom: 0
+    - name: ui_line
+      outer:
+        x: 961
+        y: 1475
+        width: 716
+        height: 9
+      inner:
+        x: 961
+        y: 1475
+        width: 716
+        height: 9
+      rotated: 0
+      paddingLeft: 0
+      paddingRight: 0
+      paddingTop: 0
+      paddingBottom: 0
+    - name: ui_list_base
+      outer:
+        x: 256
+        y: 667
+        width: 183
+        height: 34
+      inner:
+        x: 262
+        y: 674
+        width: 144
+        height: 21
+      rotated: 0
+      paddingLeft: 0
+      paddingRight: 0
+      paddingTop: 0
+      paddingBottom: 0
+    - name: ui_input
+      outer:
+        x: 256
+        y: 556
+        width: 144
+        height: 33
+      inner:
+        x: 266
+        y: 566
+        width: 124
+        height: 13
+      rotated: 0
+      paddingLeft: 0
+      paddingRight: 0
+      paddingTop: 0
+      paddingBottom: 0
+    - name: ui_list_list
+      outer:
+        x: 256
+        y: 632
+        width: 181
+        height: 34
+      inner:
+        x: 264
+        y: 640
+        width: 165
+        height: 18
+      rotated: 0
+      paddingLeft: 0
+      paddingRight: 0
+      paddingTop: 0
+      paddingBottom: 0
+    - name: ui_checkbox
+      outer:
+        x: 1972
+        y: 1589
+        width: 32
+        height: 30
+      inner:
+        x: 1972
+        y: 1589
+        width: 32
+        height: 30
+      rotated: 0
+      paddingLeft: 0
+      paddingRight: 0
+      paddingTop: 0
+      paddingBottom: 0
+    - name: ui_slider_slot
+      outer:
+        x: 1127
+        y: 1464
+        width: 195
+        height: 10
+      inner:
+        x: 1127
+        y: 1464
+        width: 195
+        height: 10
+      rotated: 0
+      paddingLeft: 0
+      paddingRight: 0
+      paddingTop: 0
+      paddingBottom: 0
+    - name: ui_button_pgUp
+      outer:
+        x: 1726
+        y: 1450
+        width: 45
+        height: 34
+      inner:
+        x: 1726
+        y: 1450
+        width: 45
+        height: 34
+      rotated: 0
+      paddingLeft: 0
+      paddingRight: 0
+      paddingTop: 0
+      paddingBottom: 0
+    - name: ui_list_choose
+      outer:
+        x: 961
+        y: 1454
+        width: 165
+        height: 20
+      inner:
+        x: 962
+        y: 1455
+        width: 163
+        height: 18
+      rotated: 0
+      paddingLeft: 0
+      paddingRight: 0
+      paddingTop: 0
+      paddingBottom: 0
+    - name: ui_slider
+      outer:
+        x: 2009
+        y: 1907
+        width: 26
+        height: 44
+      inner:
+        x: 2009
+        y: 1907
+        width: 26
+        height: 44
+      rotated: 0
+      paddingLeft: 0
+      paddingRight: 0
+      paddingTop: 0
+      paddingBottom: 0
+    - name: ui_bg_icon..
+      outer:
+        x: 1903
+        y: 1516
+        width: 114
+        height: 70
+      inner:
+        x: 1903
+        y: 1516
+        width: 114
+        height: 70
+      rotated: 0
+      paddingLeft: 0
+      paddingRight: 0
+      paddingTop: 0
+      paddingBottom: 0
+    - name: maps-world-map-01
+      outer:
+        x: 0
+        y: 702
+        width: 500
+        height: 248
+      inner:
+        x: 0
+        y: 702
+        width: 500
+        height: 248
+      rotated: 0
+      paddingLeft: 0
+      paddingRight: 0
+      paddingTop: 0
+      paddingBottom: 0
+    - name: aottg0_0
+      outer:
+        x: 0
+        y: 951
+        width: 511
+        height: 496
+      inner:
+        x: 0
+        y: 951
+        width: 511
+        height: 496
+      rotated: 0
+      paddingLeft: 0
+      paddingRight: 0.0019569471
+      paddingTop: 0
+      paddingBottom: 0.032258064
+    - name: aottg_small_0
+      outer:
+        x: 1811
+        y: 1587
+        width: 127
+        height: 65
+      inner:
+        x: 1811
+        y: 1587
+        width: 127
+        height: 65
+      rotated: 0
+      paddingLeft: 0
+      paddingRight: 0.007874016
+      paddingTop: 0
+      paddingBottom: 0.9692308
+    - name: kill_info
+      outer:
+        x: 1972
+        y: 1620
+        width: 32
+        height: 32
+      inner:
+        x: 1972
+        y: 1620
+        width: 32
+        height: 32
+      rotated: 0
+      paddingLeft: 0
+      paddingRight: 0
+      paddingTop: 0
+      paddingBottom: 0
+    - name: kill_info2
+      outer:
+        x: 2005
+        y: 1621
+        width: 26
+        height: 31
+      inner:
+        x: 2005
+        y: 1621
+        width: 26
+        height: 31
+      rotated: 0
+      paddingLeft: 0.115384616
+      paddingRight: 0.115384616
+      paddingTop: 0.032258064
+      paddingBottom: 0
+    - name: kill_info3
+      outer:
+        x: 2026
+        y: 2020
+        width: 16
+        height: 28
+      inner:
+        x: 2026
+        y: 2020
+        width: 16
+        height: 28
+      rotated: 0
+      paddingLeft: 0.5
+      paddingRight: 0.5
+      paddingTop: 0.071428575
+      paddingBottom: 0.071428575
+    - name: kill_info6
+      outer:
+        x: 1485
+        y: 1458
+        width: 16
+        height: 16
+      inner:
+        x: 1485
+        y: 1458
+        width: 16
+        height: 16
+      rotated: 0
+      paddingLeft: 0
+      paddingRight: 0
+      paddingTop: 0
+      paddingBottom: 0
+    - name: kill_info5
+      outer:
+        x: 1468
+        y: 1458
+        width: 16
+        height: 16
+      inner:
+        x: 1468
+        y: 1458
+        width: 16
+        height: 16
+      rotated: 0
+      paddingLeft: 0
+      paddingRight: 0
+      paddingTop: 0
+      paddingBottom: 0
+    - name: kill_info4
+      outer:
+        x: 1502
+        y: 1458
+        width: 14
+        height: 16
+      inner:
+        x: 1502
+        y: 1458
+        width: 14
+        height: 16
+      rotated: 0
+      paddingLeft: 0.071428575
+      paddingRight: 0.071428575
+      paddingTop: 0
+      paddingBottom: 0
+    - name: bg
+      outer:
+        x: 0
+        y: 1448
+        width: 960
+        height: 600
+      inner:
+        x: 0
+        y: 1448
+        width: 960
+        height: 600
+      rotated: 0
+      paddingLeft: 0
+      paddingRight: 0
+      paddingTop: 0
+      paddingBottom: 0
+    - name: stylish_bg
+      outer:
+        x: 1323
+        y: 1457
+        width: 94
+        height: 17
+      inner:
+        x: 1323
+        y: 1457
+        width: 94
+        height: 17
+      rotated: 0
+      paddingLeft: 0
+      paddingRight: 0
+      paddingTop: 0
+      paddingBottom: 0
+    - name: stylish_bar
+      outer:
+        x: 1127
+        y: 1457
+        width: 69
+        height: 6
+      inner:
+        x: 1127
+        y: 1457
+        width: 69
+        height: 6
+      rotated: 0
+      paddingLeft: 0
+      paddingRight: 0
+      paddingTop: 0
+      paddingBottom: 0
+    - name: aottg_stylish_24_0
+      outer:
+        x: 1811
+        y: 1653
+        width: 127
+        height: 76
+      inner:
+        x: 1811
+        y: 1653
+        width: 127
+        height: 76
+      rotated: 0
+      paddingLeft: 0
+      paddingRight: 0.007874016
+      paddingTop: 0
+      paddingBottom: 0.68421054
+    - name: aottg_stylish_48.txt_0
+      outer:
+        x: 0
+        y: 448
+        width: 255
+        height: 253
+      inner:
+        x: 0
+        y: 448
+        width: 255
+        height: 253
+      rotated: 0
+      paddingLeft: 0
+      paddingRight: 0.003921569
+      paddingTop: 0
+      paddingBottom: 0.011857707
+  mCoordinates: 0
+  mPixelSize: 1
+  mReplacement: {fileID: 0}

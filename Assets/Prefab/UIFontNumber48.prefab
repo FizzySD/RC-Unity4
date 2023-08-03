@@ -1,0 +1,178 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &100100000
+Prefab:
+  serializedVersion: 2
+  m_ObjectHideFlags: 1
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications: []
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 0}
+  m_RootGameObject: {fileID: 1095523997120248}
+  m_IsPrefabParent: 1
+  m_IsExploded: 0
+--- !u!1 &1095523997120248
+GameObject:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_Component:
+  - 4: {fileID: 4238331559651682}
+  - 114: {fileID: 114219763349864322}
+  m_Layer: 0
+  m_Name: UIFontNumber48
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4238331559651682
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1095523997120248}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+--- !u!114 &114219763349864322
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1095523997120248}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a68422e122212f3eb86c19ce6ed442e, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  mMat: {fileID: 2100000, guid: cfb4a653a9b263742b2e7ff61f8bc30a, type: 2}
+  mUVRect:
+    x: 0.9291992
+    y: 0.22607422
+    width: 0.0625
+    height: 0.0625
+  mFont:
+    mSize: 48
+    mBase: 36
+    mWidth: 128
+    mHeight: 128
+    mSpriteName: hitscore48_0
+    mSaved:
+      Array:
+      - index: 48
+        x: 83
+        y: 29
+        width: 28
+        height: 25
+        offsetX: 1
+        offsetY: 10
+        advance: 30
+        channel: 15
+        kerning:
+      - index: 49
+        x: 0
+        y: 30
+        width: 16
+        height: 28
+        offsetX: 6
+        offsetY: 8
+        advance: 30
+        channel: 15
+        kerning:
+      - index: 50
+        x: 17
+        y: 30
+        width: 22
+        height: 27
+        offsetX: 3
+        offsetY: 9
+        advance: 30
+        channel: 15
+        kerning:
+      - index: 51
+        x: 95
+        y: 0
+        width: 18
+        height: 28
+        offsetX: 6
+        offsetY: 9
+        advance: 30
+        channel: 15
+        kerning:
+      - index: 52
+        x: 23
+        y: 0
+        width: 26
+        height: 28
+        offsetX: 1
+        offsetY: 8
+        advance: 30
+        channel: 15
+        kerning:
+      - index: 53
+        x: 63
+        y: 29
+        width: 19
+        height: 27
+        offsetX: 4
+        offsetY: 9
+        advance: 30
+        channel: 15
+        kerning:
+      - index: 54
+        x: 50
+        y: 0
+        width: 22
+        height: 28
+        offsetX: 4
+        offsetY: 8
+        advance: 30
+        channel: 15
+        kerning:
+      - index: 55
+        x: 73
+        y: 0
+        width: 21
+        height: 28
+        offsetX: 5
+        offsetY: 9
+        advance: 30
+        channel: 15
+        kerning:
+      - index: 56
+        x: 40
+        y: 29
+        width: 22
+        height: 27
+        offsetX: 4
+        offsetY: 9
+        advance: 30
+        channel: 15
+        kerning:
+      - index: 57
+        x: 0
+        y: 0
+        width: 22
+        height: 29
+        offsetX: 4
+        offsetY: 9
+        advance: 30
+        channel: 15
+        kerning:
+  mSpacingX: -5
+  mSpacingY: 0
+  mAtlas: {fileID: 114545857489073028, guid: a622e55237b57d949a7dde3967aa119e, type: 2}
+  mReplacement: {fileID: 0}
+  mPixelSize: 1
+  mSymbols:
+    Array: []
+  mDynamicFont: {fileID: 0}
+  mDynamicFontSize: 16
+  mDynamicFontStyle: 0
+  mDynamicFontOffset: 0

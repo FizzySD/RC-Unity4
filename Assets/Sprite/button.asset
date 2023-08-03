@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!213 &21300000
+Sprite:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: button
+  m_Rect:
+    serializedVersion: 2
+    x: 0.012912571
+    y: 0
+    width: 31.987087
+    height: 26.92388
+  m_Offset: {x: -0.00645663, y: 2.538061}
+  m_Border: {x: 2.9870875, y: 3, z: 17, w: -3.0761204}
+  m_PixelsToUnits: 100
+  m_Extrude: 1
+  m_AtlasName:
+  m_PackingTag:
+  m_RD:
+    texture: {fileID: 2800000, guid: 586b8db0888b7b74c99c099eba43021a, type: 3}
+    vertices:
+    - serializedVersion: 2
+      pos: {x: 0.02, y: 0.11, z: 0}
+    - serializedVersion: 2
+      pos: {x: 0.16, y: -0.16, z: 0}
+    - serializedVersion: 2
+      pos: {x: 0.16, y: 0.11, z: 0}
+    - serializedVersion: 2
+      pos: {x: -0.16, y: -0.01, z: 0}
+    - serializedVersion: 2
+      pos: {x: -0.16, y: -0.16, z: 0}
+    indices:
+    - 4
+    - 3
+    - 1
+    - 0
+    - 1
+    - 3
+    - 2
+    - 1
+    - 0
+    textureRect:
+      serializedVersion: 2
+      x: 0.012912571
+      y: 0
+      width: 31.987087
+      height: 26.92388
+    textureRectOffset: {x: 0, y: 0}
+    settingsRaw: 192
+    uvTransform: {x: 100, y: 16, z: 100, w: 16}

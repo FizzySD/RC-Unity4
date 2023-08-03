@@ -1,0 +1,14 @@
+public enum GAMEMODE
+{
+	KILL_TITAN = 0,
+	PVP_AHSS = 1,
+	CAGE_FIGHT = 2,
+	ENDLESS_TITAN = 3,
+	SURVIVE_MODE = 4,
+	BOSS_FIGHT_CT = 5,
+	TROST = 6,
+	TUTORIAL = 7,
+	RACING = 8,
+	PVP_CAPTURE = 9,
+	None = 10
+}

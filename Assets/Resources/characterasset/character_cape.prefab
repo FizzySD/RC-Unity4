@@ -1,0 +1,334 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &100100000
+Prefab:
+  serializedVersion: 2
+  m_ObjectHideFlags: 1
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications: []
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 0}
+  m_RootGameObject: {fileID: 1395186983128725}
+  m_IsPrefabParent: 1
+  m_IsExploded: 0
+--- !u!1 &1395186983128725
+GameObject:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_Component:
+  - 4: {fileID: 4209002836166938}
+  - 137: {fileID: 137710164813899265}
+  - 163: {fileID: 163015882445058522}
+  m_Layer: 0
+  m_Name: character_cape
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4209002836166938
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1395186983128725}
+  m_LocalRotation: {x: 0, y: -0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.14251804, y: -0.0048237294, z: 0}
+  m_LocalScale: {x: 0.23512985, y: 0.23512985, z: 0.23512985}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+--- !u!137 &137710164813899265
+SkinnedMeshRenderer:
+  serializedVersion: 2
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1395186983128725}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_LightmapIndex: 255
+  m_LightmapTilingOffset: {x: 1, y: 1, z: 0, w: 0}
+  m_Materials:
+  - {fileID: 2100000, guid: 912213446f1d0404dbf7a72e4a381b09, type: 2}
+  m_SubsetIndices: []
+  m_StaticBatchRoot: {fileID: 0}
+  m_UseLightProbes: 0
+  m_LightProbeAnchor: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+  m_Quality: 0
+  m_UpdateWhenOffscreen: 0
+  m_Mesh: {fileID: 0}
+  m_Bones:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  m_BlendShapeWeights: []
+  m_RootBone: {fileID: 0}
+  m_AABB:
+    m_Center: {x: 5.9604645E-08, y: 0.10120767, z: 0.31012517}
+    m_Extent: {x: 0.29019716, y: 0.2827612, z: 0.308361}
+  m_DirtyAABB: 0
+--- !u!163 &163015882445058522
+SkinnedCloth:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1395186983128725}
+  m_Enabled: 1
+  m_BendingStiffness: 0
+  m_StretchingStiffness: 0.001
+  m_Damping: 0
+  m_Thickness: 0.001
+  m_UseGravity: 0
+  m_SelfCollision: 0
+  m_ExternalAcceleration: {x: 0, y: 0, z: 0}
+  m_RandomAcceleration: {x: 1, y: 1, z: 1}
+  m_WorldVelocityScale: 0.5
+  m_WorldAccelerationScale: 0.1
+  m_Coefficients:
+  - maxDistance: 0.03
+    maxDistanceBias: 0
+    collisionSphereRadius: 0
+    collisionSphereDistance: 0
+  - maxDistance: 0.03
+    maxDistanceBias: 0
+    collisionSphereRadius: 0
+    collisionSphereDistance: 0
+  - maxDistance: 0.03
+    maxDistanceBias: 0
+    collisionSphereRadius: 0
+    collisionSphereDistance: 0
+  - maxDistance: 0.03
+    maxDistanceBias: 0
+    collisionSphereRadius: 0
+    collisionSphereDistance: 0
+  - maxDistance: 0.03
+    maxDistanceBias: 0
+    collisionSphereRadius: 0
+    collisionSphereDistance: 0
+  - maxDistance: 0.03
+    maxDistanceBias: 0
+    collisionSphereRadius: 0
+    collisionSphereDistance: 0
+  - maxDistance: 0.03
+    maxDistanceBias: 0
+    collisionSphereRadius: 0
+    collisionSphereDistance: 0
+  - maxDistance: 0.03
+    maxDistanceBias: 0
+    collisionSphereRadius: 0
+    collisionSphereDistance: 0
+  - maxDistance: 0
+    maxDistanceBias: 0
+    collisionSphereRadius: 0
+    collisionSphereDistance: 0
+  - maxDistance: 0
+    maxDistanceBias: 0
+    collisionSphereRadius: 0
+    collisionSphereDistance: 0
+  - maxDistance: 0
+    maxDistanceBias: 0
+    collisionSphereRadius: 0
+    collisionSphereDistance: 0
+  - maxDistance: 0
+    maxDistanceBias: 0
+    collisionSphereRadius: 0
+    collisionSphereDistance: 0
+  - maxDistance: 0
+    maxDistanceBias: 0
+    collisionSphereRadius: 0
+    collisionSphereDistance: 0
+  - maxDistance: 0
+    maxDistanceBias: 0
+    collisionSphereRadius: 0
+    collisionSphereDistance: 0
+  - maxDistance: 0
+    maxDistanceBias: 0
+    collisionSphereRadius: 0
+    collisionSphereDistance: 0
+  - maxDistance: 0
+    maxDistanceBias: 0
+    collisionSphereRadius: 0
+    collisionSphereDistance: 0
+  - maxDistance: 0
+    maxDistanceBias: 0
+    collisionSphereRadius: 0
+    collisionSphereDistance: 0
+  - maxDistance: 0
+    maxDistanceBias: 0
+    collisionSphereRadius: 0
+    collisionSphereDistance: 0
+  - maxDistance: 0
+    maxDistanceBias: 0
+    collisionSphereRadius: 0
+    collisionSphereDistance: 0
+  - maxDistance: 0
+    maxDistanceBias: 0
+    collisionSphereRadius: 0
+    collisionSphereDistance: 0
+  - maxDistance: 0
+    maxDistanceBias: 0
+    collisionSphereRadius: 0
+    collisionSphereDistance: 0
+  - maxDistance: 0
+    maxDistanceBias: 0
+    collisionSphereRadius: 0
+    collisionSphereDistance: 0
+  - maxDistance: 0
+    maxDistanceBias: 0
+    collisionSphereRadius: 0
+    collisionSphereDistance: 0
+  - maxDistance: 0
+    maxDistanceBias: 0
+    collisionSphereRadius: 0
+    collisionSphereDistance: 0
+  - maxDistance: 0
+    maxDistanceBias: 0
+    collisionSphereRadius: 0
+    collisionSphereDistance: 0
+  - maxDistance: 0
+    maxDistanceBias: 0
+    collisionSphereRadius: 0
+    collisionSphereDistance: 0
+  - maxDistance: 0
+    maxDistanceBias: 0
+    collisionSphereRadius: 0
+    collisionSphereDistance: 0
+  - maxDistance: 0
+    maxDistanceBias: 0
+    collisionSphereRadius: 0
+    collisionSphereDistance: 0
+  - maxDistance: 0
+    maxDistanceBias: 0
+    collisionSphereRadius: 0
+    collisionSphereDistance: 0
+  - maxDistance: 0
+    maxDistanceBias: 0
+    collisionSphereRadius: 0
+    collisionSphereDistance: 0
+  - maxDistance: 0
+    maxDistanceBias: 0
+    collisionSphereRadius: 0
+    collisionSphereDistance: 0
+  - maxDistance: 0
+    maxDistanceBias: 0
+    collisionSphereRadius: 0
+    collisionSphereDistance: 0
+  - maxDistance: 0.03
+    maxDistanceBias: 0
+    collisionSphereRadius: 0
+    collisionSphereDistance: 0
+  - maxDistance: 0.03
+    maxDistanceBias: 0
+    collisionSphereRadius: 0
+    collisionSphereDistance: 0
+  - maxDistance: 0.03
+    maxDistanceBias: 0
+    collisionSphereRadius: 0
+    collisionSphereDistance: 0
+  - maxDistance: 0.03
+    maxDistanceBias: 0
+    collisionSphereRadius: 0
+    collisionSphereDistance: 0
+  - maxDistance: 0.03
+    maxDistanceBias: 0
+    collisionSphereRadius: 0
+    collisionSphereDistance: 0
+  - maxDistance: 0.03
+    maxDistanceBias: 0
+    collisionSphereRadius: 0
+    collisionSphereDistance: 0
+  - maxDistance: 0
+    maxDistanceBias: 0
+    collisionSphereRadius: 0
+    collisionSphereDistance: 0
+  - maxDistance: 0
+    maxDistanceBias: 0
+    collisionSphereRadius: 0
+    collisionSphereDistance: 0
+  - maxDistance: 0
+    maxDistanceBias: 0
+    collisionSphereRadius: 0
+    collisionSphereDistance: 0
+  - maxDistance: 0
+    maxDistanceBias: 0
+    collisionSphereRadius: 0
+    collisionSphereDistance: 0
+  - maxDistance: 0
+    maxDistanceBias: 0
+    collisionSphereRadius: 0
+    collisionSphereDistance: 0
+  - maxDistance: 0
+    maxDistanceBias: 0
+    collisionSphereRadius: 0
+    collisionSphereDistance: 0
+  - maxDistance: 0
+    maxDistanceBias: 0
+    collisionSphereRadius: 0
+    collisionSphereDistance: 0
+  - maxDistance: 0
+    maxDistanceBias: 0
+    collisionSphereRadius: 0
+    collisionSphereDistance: 0
+  - maxDistance: 0
+    maxDistanceBias: 0
+    collisionSphereRadius: 0
+    collisionSphereDistance: 0
+  - maxDistance: 0
+    maxDistanceBias: 0
+    collisionSphereRadius: 0
+    collisionSphereDistance: 0
+  - maxDistance: 0
+    maxDistanceBias: 0
+    collisionSphereRadius: 0
+    collisionSphereDistance: 0
+  - maxDistance: 0
+    maxDistanceBias: 0
+    collisionSphereRadius: 0
+    collisionSphereDistance: 0
+  - maxDistance: 0
+    maxDistanceBias: 0
+    collisionSphereRadius: 0
+    collisionSphereDistance: 0
+  - maxDistance: 0
+    maxDistanceBias: 0
+    collisionSphereRadius: 0
+    collisionSphereDistance: 0
