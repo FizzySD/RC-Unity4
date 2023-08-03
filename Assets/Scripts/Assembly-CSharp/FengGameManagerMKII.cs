@@ -8643,20 +8643,24 @@ internal class FengGameManagerMKII : Photon.MonoBehaviour
 		}
 	}
 
-	public void SpawnPlayer(string id, string tag = "playerRespawn")
-	{
-		if (IN_GAME_MAIN_CAMERA.gamemode == GAMEMODE.PVP_CAPTURE)
-		{
-			SpawnPlayerAt2(id, checkpoint);
-			return;
-		}
-		myLastRespawnTag = tag;
-		GameObject[] array = GameObject.FindGameObjectsWithTag(tag);
-		GameObject pos = array[UnityEngine.Random.Range(0, array.Length)];
-		SpawnPlayerAt2(id, pos);
-	}
-
-	public void SpawnPlayerAt2(string id, GameObject pos)
+    public void SpawnPlayer(string id, string tag = "playerRespawn")
+    {
+        if (IN_GAME_MAIN_CAMERA.gamemode == GAMEMODE.PVP_CAPTURE)
+        {
+            SpawnPlayerAt2(id, checkpoint);
+            return;
+        }
+        myLastRespawnTag = tag;
+        GameObject[] array = GameObject.FindGameObjectsWithTag(tag);
+        if (array.Length == 0)
+        {
+            UnityEngine.Debug.LogError("No objects found with the tag: " + tag);
+            return;
+        }
+        GameObject pos = array[UnityEngine.Random.Range(0, array.Length)];
+        SpawnPlayerAt2(id, pos);
+    }
+    public void SpawnPlayerAt2(string id, GameObject pos)
 	{
 		if (!logicLoaded || !customLevelLoaded)
 		{
