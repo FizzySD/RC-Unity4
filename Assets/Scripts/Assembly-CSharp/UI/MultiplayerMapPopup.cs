@@ -76,20 +76,22 @@ namespace UI
 
 		public override void Setup(BasePanel parent = null)
 		{
-			base.Setup(parent);
-			ElementStyle elementStyle = new ElementStyle(ButtonFontSize, 120f, ThemePanel);
-			GameObject gameObject = SinglePanel.Find("MultiplayerMap").gameObject;
-			Button[] componentsInChildren = gameObject.GetComponentsInChildren<Button>();
-			foreach (Button button in componentsInChildren)
-			{
-				button.onClick.AddListener(delegate
-				{
-					OnButtonClick(button.name);
-				});
-				button.GetComponent<Button>().colors = UIManager.GetThemeColorBlock(elementStyle.ThemePanel, "DefaultButton", "");
-				button.transform.Find("Text").GetComponent<Text>().color = UIManager.GetThemeColor(elementStyle.ThemePanel, "DefaultButton", "TextColor");
-			}
-			string category = "MainMenu";
+            base.Setup(parent);
+            ElementStyle elementStyle = new ElementStyle(ButtonFontSize, 120f, ThemePanel);
+            GameObject gameObject = SinglePanel.Find("MultiplayerMap").gameObject;
+            Button[] componentsInChildren = gameObject.GetComponentsInChildren<Button>();
+            foreach (Button button in componentsInChildren)
+            {
+                string buttonName = button.name; // Cattura il nome del pulsante nella variabile locale
+                Debug.Log("Server name " + buttonName);
+                button.onClick.AddListener(delegate
+                {
+                    OnButtonClick(buttonName); // Utilizza la variabile locale invece di "button.name"
+                });
+                button.GetComponent<Button>().colors = UIManager.GetThemeColorBlock(elementStyle.ThemePanel, "DefaultButton", "");
+                button.transform.Find("Text").GetComponent<Text>().color = UIManager.GetThemeColor(elementStyle.ThemePanel, "DefaultButton", "TextColor");
+            }
+           string category = "MainMenu";
 			string subCategory = "MultiplayerMapPopup";
 			ElementFactory.CreateDefaultButton(BottomBar, elementStyle, "LAN", 0f, 0f, delegate
 			{
