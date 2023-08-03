@@ -53,7 +53,7 @@ public class TriggerColliderWeapon : MonoBehaviour
 		{
 			currentHitsII.Add(other.gameObject);
 			currentCamera.GetComponent<IN_GAME_MAIN_CAMERA>().startShake(0.1f, 0.1f);
-			if (other.transform.root.gameObject.tag == "titan")
+			if (other.transform.root.gameObject.tag == "titan" && other.gameObject.layer != 16)
 			{
 				component.slashHit.Play();
 				GameObject gameObject = ((IN_GAME_MAIN_CAMERA.gametype == GAMETYPE.SINGLE) ? ((GameObject)Object.Instantiate(Resources.Load("hitMeat"))) : PhotonNetwork.Instantiate("hitMeat", base.transform.position, Quaternion.Euler(270f, 0f, 0f), 0));
