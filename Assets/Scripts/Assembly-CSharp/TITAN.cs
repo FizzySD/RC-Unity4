@@ -1392,9 +1392,9 @@ internal class TITAN : Photon.MonoBehaviour
 						crossFade("crawler_idle", 0.1f);
 					}
 				}
-				else if (!baseAnimation.IsPlaying("idle"))
+				else if (!baseAnimation.IsPlaying("idle_4"))
 				{
-					crossFade("idle", 0.1f);
+					crossFade("idle_4", 0.1f);
 				}
 				vector3 = Vector3.zero;
 			}
@@ -2108,7 +2108,7 @@ internal class TITAN : Photon.MonoBehaviour
 		}
 		else
 		{
-			crossFadeIfNotPlaying("idle", 0.2f);
+			crossFadeIfNotPlaying("idle_4", 0.2f);
 		}
 	}
 
@@ -3582,7 +3582,7 @@ internal class TITAN : Photon.MonoBehaviour
 		{
 			if (stamina < maxStamina)
 			{
-				if (baseAnimation.IsPlaying("idle"))
+				if (baseAnimation.IsPlaying("idle_4"))
 				{
 					stamina += Time.deltaTime * 30f;
 				}
@@ -4192,7 +4192,7 @@ internal class TITAN : Photon.MonoBehaviour
 				{
 					baseTransform.rotation = Quaternion.Euler(baseTransform.rotation.eulerAngles.x, baseTransform.rotation.eulerAngles.y + 180f, baseTransform.rotation.eulerAngles.z);
 					idle(UnityEngine.Random.Range(0.5f, 1f));
-					playAnimation("idle");
+					playAnimation("idle_4");
 				}
 				else if (abnormalType == AbnormalType.TYPE_I || abnormalType == AbnormalType.TYPE_JUMPER)
 				{
