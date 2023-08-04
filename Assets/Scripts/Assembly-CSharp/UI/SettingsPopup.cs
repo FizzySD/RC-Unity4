@@ -86,11 +86,12 @@ namespace UI
 			string[] array = new string[8] { "General", "Graphics", "UI", "Keybinds", "Skins", "CustomMap", "Game", "Ability" };
 			foreach (string buttonName in array)
 			{
-				GameObject gameObject = ElementFactory.CreateCategoryButton(TopBar, style, UIManager.GetLocale(LocaleCategory, "Top", buttonName + "Button"), delegate
+				string button = buttonName;
+				GameObject gameObject = ElementFactory.CreateCategoryButton(TopBar, style, UIManager.GetLocale(LocaleCategory, "Top", button + "Button"), delegate
 				{
-					SetCategoryPanel(buttonName);
+					SetCategoryPanel(button);
 				});
-				_topButtons.Add(buttonName, gameObject.GetComponent<Button>());
+				_topButtons.Add(button, gameObject.GetComponent<Button>());
 			}
 			base.SetupTopButtons();
 		}
@@ -144,9 +145,10 @@ namespace UI
 			string[] array = new string[5] { "Default", "Load", "Save", "Continue", "Quit" };
 			foreach (string buttonName in array)
 			{
-				GameObject gameObject = ElementFactory.CreateDefaultButton(BottomBar, style, UIManager.GetLocaleCommon(buttonName), 0f, 0f, delegate
+				string button = buttonName;
+				GameObject gameObject = ElementFactory.CreateDefaultButton(BottomBar, style, UIManager.GetLocaleCommon(button), 0f, 0f, delegate
 				{
-					OnBottomBarButtonClick(buttonName);
+					OnBottomBarButtonClick(button);
 				});
 			}
 		}
