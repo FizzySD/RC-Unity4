@@ -1,111 +1,121 @@
-using System.Collections.Generic;
-using UnityEngine;
+//----------------------------------------------
+//            NGUI: Next-Gen UI kit
+// Copyright © 2011-2013 Tasharen Entertainment
+//----------------------------------------------
 
-[AddComponentMenu("NGUI/Interaction/Grid")]
+using UnityEngine;
+using System.Collections.Generic;
+
+/// <summary>
+/// All children added to the game object with this script will be repositioned to be on a grid of specified dimensions.
+/// If you want the cells to automatically set their scale based on the dimensions of their content, take a look at UITable.
+/// </summary>
+
 [ExecuteInEditMode]
+[AddComponentMenu("NGUI/Interaction/Grid")]
 public class UIGrid : MonoBehaviour
 {
 	public enum Arrangement
 	{
-		Horizontal = 0,
-		Vertical = 1
+		Horizontal,
+		Vertical,
 	}
 
-	public Arrangement arrangement;
-
-	public float cellHeight = 200f;
-
+	public Arrangement arrangement = Arrangement.Horizontal;
+	public int maxPerLine = 0;
 	public float cellWidth = 200f;
-
+	public float cellHeight = 200f;
+	public bool repositionNow = false;
+	public bool sorted = false;
 	public bool hideInactive = true;
 
-	public int maxPerLine;
+	bool mStarted = false;
 
-	private bool mStarted;
-
-	public bool repositionNow;
-
-	public bool sorted;
-
-	public void Reposition()
-	{
-		if (!mStarted)
-		{
-			repositionNow = true;
-			return;
-		}
-		Transform transform = base.transform;
-		int num = 0;
-		int num2 = 0;
-		if (sorted)
-		{
-			List<Transform> list = new List<Transform>();
-			for (int i = 0; i < transform.childCount; i++)
-			{
-				Transform child = transform.GetChild(i);
-				if (child != null && (!hideInactive || NGUITools.GetActive(child.gameObject)))
-				{
-					list.Add(child);
-				}
-			}
-			list.Sort(SortByName);
-			int j = 0;
-			for (int count = list.Count; j < count; j++)
-			{
-				Transform transform2 = list[j];
-				if (NGUITools.GetActive(transform2.gameObject) || !hideInactive)
-				{
-					float z = transform2.localPosition.z;
-					transform2.localPosition = ((arrangement != 0) ? new Vector3(cellWidth * (float)num2, (0f - cellHeight) * (float)num, z) : new Vector3(cellWidth * (float)num, (0f - cellHeight) * (float)num2, z));
-					if (++num >= maxPerLine && maxPerLine > 0)
-					{
-						num = 0;
-						num2++;
-					}
-				}
-			}
-		}
-		else
-		{
-			for (int k = 0; k < transform.childCount; k++)
-			{
-				Transform child2 = transform.GetChild(k);
-				if (NGUITools.GetActive(child2.gameObject) || !hideInactive)
-				{
-					float z2 = child2.localPosition.z;
-					child2.localPosition = ((arrangement != 0) ? new Vector3(cellWidth * (float)num2, (0f - cellHeight) * (float)num, z2) : new Vector3(cellWidth * (float)num, (0f - cellHeight) * (float)num2, z2));
-					if (++num >= maxPerLine && maxPerLine > 0)
-					{
-						num = 0;
-						num2++;
-					}
-				}
-			}
-		}
-		UIDraggablePanel uIDraggablePanel = NGUITools.FindInParents<UIDraggablePanel>(base.gameObject);
-		if (uIDraggablePanel != null)
-		{
-			uIDraggablePanel.UpdateScrollbars(true);
-		}
-	}
-
-	public static int SortByName(Transform a, Transform b)
-	{
-		return string.Compare(a.name, b.name);
-	}
-
-	private void Start()
+	void Start ()
 	{
 		mStarted = true;
 		Reposition();
 	}
 
-	private void Update()
+	void Update ()
 	{
 		if (repositionNow)
 		{
 			repositionNow = false;
 			Reposition();
 		}
+	}
+
+	static public int SortByName (Transform a, Transform b) { return string.Compare(a.name, b.name); }
+
+	/// <summary>
+	/// Recalculate the position of all elements within the grid, sorting them alphabetically if necessary.
+	/// </summary>
+
+	public void Reposition ()
+	{
+		if (!mStarted)
+		{
+			repositionNow = true;
+			return;
+		}
+
+		Transform myTrans = transform;
+
+		int x = 0;
+		int y = 0;
+
+		if (sorted)
+		{
+			List<Transform> list = new List<Transform>();
+
+			for (int i = 0; i < myTrans.childCount; ++i)
+			{
+				Transform t = myTrans.GetChild(i);
+				if (t && (!hideInactive || NGUITools.GetActive(t.gameObject))) list.Add(t);
+			}
+			list.Sort(SortByName);
+
+			for (int i = 0, imax = list.Count; i < imax; ++i)
+			{
+				Transform t = list[i];
+
+				if (!NGUITools.GetActive(t.gameObject) && hideInactive) continue;
+
+				float depth = t.localPosition.z;
+				t.localPosition = (arrangement == Arrangement.Horizontal) ?
+					new Vector3(cellWidth * x, -cellHeight * y, depth) :
+					new Vector3(cellWidth * y, -cellHeight * x, depth);
+
+				if (++x >= maxPerLine && maxPerLine > 0)
+				{
+					x = 0;
+					++y;
+				}
+			}
+		}
+		else
+		{
+			for (int i = 0; i < myTrans.childCount; ++i)
+			{
+				Transform t = myTrans.GetChild(i);
+
+				if (!NGUITools.GetActive(t.gameObject) && hideInactive) continue;
+
+				float depth = t.localPosition.z;
+				t.localPosition = (arrangement == Arrangement.Horizontal) ?
+					new Vector3(cellWidth * x, -cellHeight * y, depth) :
+					new Vector3(cellWidth * y, -cellHeight * x, depth);
+
+				if (++x >= maxPerLine && maxPerLine > 0)
+				{
+					x = 0;
+					++y;
+				}
+			}
+		}
+
+		UIDraggablePanel drag = NGUITools.FindInParents<UIDraggablePanel>(gameObject);
+		if (drag != null) drag.UpdateScrollbars(true);
 	}
 }

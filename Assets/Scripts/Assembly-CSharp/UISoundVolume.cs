@@ -1,19 +1,29 @@
+//----------------------------------------------
+//            NGUI: Next-Gen UI kit
+// Copyright © 2011-2013 Tasharen Entertainment
+//----------------------------------------------
+
 using UnityEngine;
 
-[AddComponentMenu("NGUI/Interaction/Sound Volume")]
+/// <summary>
+/// Very simple script that can be attached to a slider and will control the volume of all sounds played via NGUITools.PlaySound,
+/// which includes all of UI's sounds.
+/// </summary>
+
 [RequireComponent(typeof(UISlider))]
+[AddComponentMenu("NGUI/Interaction/Sound Volume")]
 public class UISoundVolume : MonoBehaviour
 {
-	private UISlider mSlider;
+	UISlider mSlider;
 
-	private void Awake()
+	void Awake ()
 	{
 		mSlider = GetComponent<UISlider>();
 		mSlider.sliderValue = NGUITools.soundVolume;
-		mSlider.eventReceiver = base.gameObject;
+		mSlider.eventReceiver = gameObject;
 	}
 
-	private void OnSliderChange(float val)
+	void OnSliderChange (float val)
 	{
 		NGUITools.soundVolume = val;
 	}

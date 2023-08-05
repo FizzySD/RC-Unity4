@@ -1,79 +1,89 @@
+//----------------------------------------------
+//            NGUI: Next-Gen UI kit
+// Copyright © 2011-2013 Tasharen Entertainment
+//----------------------------------------------
+
 using UnityEngine;
+
+/// <summary>
+/// Similar to SpringPosition, but also moves the panel's clipping. Works in local coordinates.
+/// </summary>
 
 [RequireComponent(typeof(UIPanel))]
 [AddComponentMenu("NGUI/Internal/Spring Panel")]
 public class SpringPanel : IgnoreTimeScale
 {
-	public delegate void OnFinished();
-
-	private UIDraggablePanel mDrag;
-
-	private UIPanel mPanel;
-
-	private float mThreshold;
-
-	private Transform mTrans;
-
-	public OnFinished onFinished;
-
+	public Vector3 target = Vector3.zero;
 	public float strength = 10f;
 
-	public Vector3 target = Vector3.zero;
+	public delegate void OnFinished ();
+	public OnFinished onFinished;
 
-	public static SpringPanel Begin(GameObject go, Vector3 pos, float strength)
-	{
-		SpringPanel springPanel = go.GetComponent<SpringPanel>();
-		if (springPanel == null)
-		{
-			springPanel = go.AddComponent<SpringPanel>();
-		}
-		springPanel.target = pos;
-		springPanel.strength = strength;
-		springPanel.onFinished = null;
-		if (!springPanel.enabled)
-		{
-			springPanel.mThreshold = 0f;
-			springPanel.enabled = true;
-		}
-		return springPanel;
-	}
+	UIPanel mPanel;
+	Transform mTrans;
+	float mThreshold = 0f;
+	UIDraggablePanel mDrag;
 
-	private void Start()
+	/// <summary>
+	/// Cache the transform.
+	/// </summary>
+
+	void Start ()
 	{
 		mPanel = GetComponent<UIPanel>();
 		mDrag = GetComponent<UIDraggablePanel>();
-		mTrans = base.transform;
+		mTrans = transform;
 	}
 
-	private void Update()
+	/// <summary>
+	/// Advance toward the target position.
+	/// </summary>
+
+	void Update ()
 	{
-		float deltaTime = UpdateRealTimeDelta();
+		float delta = UpdateRealTimeDelta();
+
 		if (mThreshold == 0f)
 		{
 			mThreshold = (target - mTrans.localPosition).magnitude * 0.005f;
+			mThreshold = Mathf.Max(mThreshold, 0.00001f);
 		}
-		bool flag = false;
-		Vector3 localPosition = mTrans.localPosition;
-		Vector3 vector = NGUIMath.SpringLerp(mTrans.localPosition, target, strength, deltaTime);
-		if (mThreshold >= Vector3.Magnitude(vector - target))
+
+		bool trigger = false;
+		Vector3 before = mTrans.localPosition;
+		Vector3 after = NGUIMath.SpringLerp(mTrans.localPosition, target, strength, delta);
+
+		if (mThreshold >= Vector3.Magnitude(after - target))
 		{
-			vector = target;
-			base.enabled = false;
-			flag = true;
+			after = target;
+			enabled = false;
+			trigger = true;
 		}
-		mTrans.localPosition = vector;
-		Vector3 vector2 = vector - localPosition;
-		Vector4 clipRange = mPanel.clipRange;
-		clipRange.x -= vector2.x;
-		clipRange.y -= vector2.y;
-		mPanel.clipRange = clipRange;
-		if (mDrag != null)
-		{
-			mDrag.UpdateScrollbars(false);
-		}
-		if (flag && onFinished != null)
-		{
-			onFinished();
-		}
+		mTrans.localPosition = after;
+
+		Vector3 offset = after - before;
+		Vector4 cr = mPanel.clipRange;
+		cr.x -= offset.x;
+		cr.y -= offset.y;
+		mPanel.clipRange = cr;
+
+		if (mDrag != null) mDrag.UpdateScrollbars(false);
+		if (trigger && onFinished != null) onFinished();
+	}
+
+	/// <summary>
+	/// Start the tweening process.
+	/// </summary>
+
+	static public SpringPanel Begin (GameObject go, Vector3 pos, float strength)
+	{
+		SpringPanel sp = go.GetComponent<SpringPanel>();
+		if (sp == null) sp = go.AddComponent<SpringPanel>();
+		sp.target = pos;
+		sp.strength = strength;
+		sp.onFinished = null;
+		sp.mThreshold = 0f;
+		sp.enabled = true;
+		return sp;
 	}
 }

@@ -1,73 +1,133 @@
-using System.Collections.Generic;
-using UnityEngine;
+//----------------------------------------------
+//            NGUI: Next-Gen UI kit
+// Copyright © 2011-2013 Tasharen Entertainment
+//----------------------------------------------
 
-[AddComponentMenu("NGUI/UI/Root")]
+using UnityEngine;
+using System.Collections.Generic;
+
+/// <summary>
+/// This is a script used to keep the game object scaled to 2/(Screen.height).
+/// If you use it, be sure to NOT use UIOrthoCamera at the same time.
+/// </summary>
+
 [ExecuteInEditMode]
+[AddComponentMenu("NGUI/UI/Root")]
 public class UIRoot : MonoBehaviour
 {
+	static List<UIRoot> mRoots = new List<UIRoot>();
+
+	/// <summary>
+	/// List of all UIRoots present in the scene.
+	/// </summary>
+
+	static public List<UIRoot> list { get { return mRoots; } }
+
 	public enum Scaling
 	{
-		PixelPerfect = 0,
-		FixedSize = 1,
-		FixedSizeOnMobiles = 2
+		PixelPerfect,
+		FixedSize,
+		FixedSizeOnMobiles,
 	}
 
-	[HideInInspector]
-	public bool automatic;
+	/// <summary>
+	/// Type of scaling used by the UIRoot.
+	/// </summary>
+
+	public Scaling scalingStyle = Scaling.FixedSize;
+
+	/// <summary>
+	/// Obsolete. Do not use.
+	/// </summary>
+
+	//[System.Obsolete("Use UIRoot's scalingStyle property instead")]
+	[HideInInspector] public bool automatic = false;
+
+	/// <summary>
+	/// Height of the screen when 'automatic' is turned off.
+	/// </summary>
 
 	public int manualHeight = 720;
 
-	public int maximumHeight = 1536;
+	/// <summary>
+	/// If the screen height goes below this value, it will be as if the scaling style
+	/// is set to FixedSize with manualHeight of this value.
+	/// </summary>
 
 	public int minimumHeight = 320;
 
-	private static List<UIRoot> mRoots = new List<UIRoot>();
+	/// <summary>
+	/// If the screen height goes above this value, it will be as if the scaling style
+	/// is set to FixedSize with manualHeight of this value.
+	/// </summary>
 
-	private Transform mTrans;
+	public int maximumHeight = 1536;
 
-	public Scaling scalingStyle = Scaling.FixedSize;
+	/// <summary>
+	/// UI Root's active height, based on the size of the screen.
+	/// </summary>
 
 	public int activeHeight
 	{
 		get
 		{
-			int num = Mathf.Max(2, Screen.height);
-			if (scalingStyle == Scaling.FixedSize)
-			{
+			int height = Mathf.Max(2, Screen.height);
+			if (scalingStyle == Scaling.FixedSize) return manualHeight;
+
+#if UNITY_IPHONE || UNITY_ANDROID
+			if (scalingStyle == Scaling.FixedSizeOnMobiles)
 				return manualHeight;
-			}
-			if (num < minimumHeight)
-			{
-				return minimumHeight;
-			}
-			if (num > maximumHeight)
-			{
-				return maximumHeight;
-			}
-			return num;
+#endif
+			if (height < minimumHeight) return minimumHeight;
+			if (height > maximumHeight) return maximumHeight;
+			return height;
 		}
 	}
 
-	public static List<UIRoot> list
+	/// <summary>
+	/// Pixel size adjustment. Most of the time it's at 1, unless 'automatic' is turned off.
+	/// </summary>
+
+	public float pixelSizeAdjustment { get { return GetPixelSizeAdjustment(Screen.height); } }
+
+	/// <summary>
+	/// Helper function that figures out the pixel size adjustment for the specified game object.
+	/// </summary>
+
+	static public float GetPixelSizeAdjustment (GameObject go)
 	{
-		get
-		{
-			return mRoots;
-		}
+		UIRoot root = NGUITools.FindInParents<UIRoot>(go);
+		return (root != null) ? root.pixelSizeAdjustment : 1f;
 	}
 
-	public float pixelSizeAdjustment
+	/// <summary>
+	/// Calculate the pixel size adjustment at the specified screen height value.
+	/// </summary>
+
+	public float GetPixelSizeAdjustment (int height)
 	{
-		get
-		{
-			return GetPixelSizeAdjustment(Screen.height);
-		}
+		height = Mathf.Max(2, height);
+
+		if (scalingStyle == Scaling.FixedSize)
+			return (float)manualHeight / height;
+
+#if UNITY_IPHONE || UNITY_ANDROID
+		if (scalingStyle == Scaling.FixedSizeOnMobiles)
+			return (float)manualHeight / height;
+#endif
+		if (height < minimumHeight) return (float)minimumHeight / height;
+		if (height > maximumHeight) return (float)maximumHeight / height;
+		return 1f;
 	}
 
-	private void Awake()
+	Transform mTrans;
+
+	void Awake ()
 	{
-		mTrans = base.transform;
+		mTrans = transform;
 		mRoots.Add(this);
+
+		// Backwards compatibility
 		if (automatic)
 		{
 			scalingStyle = Scaling.PixelPerfect;
@@ -75,99 +135,74 @@ public class UIRoot : MonoBehaviour
 		}
 	}
 
-	public static void Broadcast(string funcName)
+	void OnDestroy () { mRoots.Remove(this); }
+
+	void Start ()
 	{
-		int i = 0;
-		for (int count = mRoots.Count; i < count; i++)
+		UIOrthoCamera oc = GetComponentInChildren<UIOrthoCamera>();
+
+		if (oc != null)
 		{
-			UIRoot uIRoot = mRoots[i];
-			if (uIRoot != null)
+			Debug.LogWarning("UIRoot should not be active at the same time as UIOrthoCamera. Disabling UIOrthoCamera.", oc);
+			Camera cam = oc.gameObject.GetComponent<Camera>();
+			oc.enabled = false;
+			if (cam != null) cam.orthographicSize = 1f;
+		}
+		else Update();
+	}
+
+	void Update ()
+	{
+		if (mTrans != null)
+		{
+			float calcActiveHeight = activeHeight;
+
+			if (calcActiveHeight > 0f )
 			{
-				uIRoot.BroadcastMessage(funcName, SendMessageOptions.DontRequireReceiver);
+				float size = 2f / calcActiveHeight;
+				
+				Vector3 ls = mTrans.localScale;
+	
+				if (!(Mathf.Abs(ls.x - size) <= float.Epsilon) ||
+					!(Mathf.Abs(ls.y - size) <= float.Epsilon) ||
+					!(Mathf.Abs(ls.z - size) <= float.Epsilon))
+				{
+					mTrans.localScale = new Vector3(size, size, size);
+				}
 			}
 		}
 	}
 
-	public static void Broadcast(string funcName, object param)
+	/// <summary>
+	/// Broadcast the specified message to the entire UI.
+	/// </summary>
+
+	static public void Broadcast (string funcName)
+	{
+		for (int i = 0, imax = mRoots.Count; i < imax; ++i)
+		{
+			UIRoot root = mRoots[i];
+			if (root != null) root.BroadcastMessage(funcName, SendMessageOptions.DontRequireReceiver);
+		}
+	}
+
+	/// <summary>
+	/// Broadcast the specified message to the entire UI.
+	/// </summary>
+
+	static public void Broadcast (string funcName, object param)
 	{
 		if (param == null)
 		{
+			// More on this: http://answers.unity3d.com/questions/55194/suggested-workaround-for-sendmessage-bug.html
 			Debug.LogError("SendMessage is bugged when you try to pass 'null' in the parameter field. It behaves as if no parameter was specified.");
-			return;
 		}
-		int i = 0;
-		for (int count = mRoots.Count; i < count; i++)
+		else
 		{
-			UIRoot uIRoot = mRoots[i];
-			if (uIRoot != null)
+			for (int i = 0, imax = mRoots.Count; i < imax; ++i)
 			{
-				uIRoot.BroadcastMessage(funcName, param, SendMessageOptions.DontRequireReceiver);
-			}
-		}
-	}
-
-	public float GetPixelSizeAdjustment(int height)
-	{
-		height = Mathf.Max(2, height);
-		if (scalingStyle == Scaling.FixedSize)
-		{
-			return (float)manualHeight / (float)height;
-		}
-		if (height < minimumHeight)
-		{
-			return (float)minimumHeight / (float)height;
-		}
-		if (height > maximumHeight)
-		{
-			return (float)maximumHeight / (float)height;
-		}
-		return 1f;
-	}
-
-	public static float GetPixelSizeAdjustment(GameObject go)
-	{
-		UIRoot uIRoot = NGUITools.FindInParents<UIRoot>(go);
-		if (!(uIRoot == null))
-		{
-			return uIRoot.pixelSizeAdjustment;
-		}
-		return 1f;
-	}
-
-	private void OnDestroy()
-	{
-		mRoots.Remove(this);
-	}
-
-	private void Start()
-	{
-		UIOrthoCamera componentInChildren = GetComponentInChildren<UIOrthoCamera>();
-		if (componentInChildren != null)
-		{
-			Debug.LogWarning("UIRoot should not be active at the same time as UIOrthoCamera. Disabling UIOrthoCamera.", componentInChildren);
-			Camera component = componentInChildren.gameObject.GetComponent<Camera>();
-			componentInChildren.enabled = false;
-			if (component != null)
-			{
-				component.orthographicSize = 1f;
-			}
-		}
-	}
-
-	private void Update()
-	{
-		if (!(mTrans != null))
-		{
-			return;
-		}
-		float num = activeHeight;
-		if (num > 0f)
-		{
-			float num2 = 2f / num;
-			Vector3 localScale = mTrans.localScale;
-			if (Mathf.Abs(localScale.x - num2) > float.Epsilon || Mathf.Abs(localScale.y - num2) > float.Epsilon || Mathf.Abs(localScale.z - num2) > float.Epsilon)
-			{
-				mTrans.localScale = new Vector3(num2, num2, num2);
+				UIRoot root = mRoots[i];
+				if (root != null) root.BroadcastMessage(funcName, param, SendMessageOptions.DontRequireReceiver);
 			}
 		}
 	}

@@ -1,136 +1,134 @@
-using System;
-using System.Runtime.CompilerServices;
+//----------------------------------------------
+//            NGUI: Next-Gen UI kit
+// Copyright © 2011-2013 Tasharen Entertainment
+//----------------------------------------------
+
+#if UNITY_3_5 || UNITY_4_0
+#define OLD_UNITY
+#endif
+
 using UnityEngine;
+using System.Collections.Generic;
+
+/// <summary>
+/// Base class for all UI components that should be derived from when creating new widget types.
+/// </summary>
 
 public abstract class UIWidget : MonoBehaviour
 {
+	/// <summary>
+	/// List of all the active widgets currently present in the scene.
+	/// </summary>
+
+	static public BetterList<UIWidget> list = new BetterList<UIWidget>();
+
 	public enum Pivot
 	{
-		TopLeft = 0,
-		Top = 1,
-		TopRight = 2,
-		Left = 3,
-		Center = 4,
-		Right = 5,
-		BottomLeft = 6,
-		Bottom = 7,
-		BottomRight = 8
+		TopLeft,
+		Top,
+		TopRight,
+		Left,
+		Center,
+		Right,
+		BottomLeft,
+		Bottom,
+		BottomRight,
 	}
 
-	[CompilerGenerated]
-	private static Comparison<UIWidget> famScache14;
-
-	protected bool mChanged = true;
-
-	[SerializeField]
-	[HideInInspector]
-	private Color mColor = Color.white;
-
-	[SerializeField]
-	[HideInInspector]
-	private int mDepth;
-
-	private Vector3 mDiffPos;
-
-	private Quaternion mDiffRot;
-
-	private Vector3 mDiffScale;
-
-	private bool mForceVisible;
-
-	private UIGeometry mGeom = new UIGeometry();
+	// Cached and saved values
+	[HideInInspector][SerializeField] Color mColor = Color.white;
+	[HideInInspector][SerializeField] Pivot mPivot = Pivot.Center;
+	[HideInInspector][SerializeField] int mDepth = 0;
 
 	protected GameObject mGo;
-
-	private float mLastAlpha;
-
-	private Matrix4x4 mLocalToPanel;
-
-	[HideInInspector]
-	[SerializeField]
-	protected Material mMat;
-
-	private Vector3 mOldV0;
-
-	private Vector3 mOldV1;
-
+	protected Transform mTrans;
 	protected UIPanel mPanel;
 
-	[HideInInspector]
-	[SerializeField]
-	private Pivot mPivot = Pivot.Center;
-
+	protected bool mChanged = true;
 	protected bool mPlayMode = true;
 
-	[SerializeField]
-	[HideInInspector]
-	protected Texture mTex;
+	bool mStarted = false;
+	Vector3 mDiffPos;
+	Quaternion mDiffRot;
+	Vector3 mDiffScale;
+	Matrix4x4 mLocalToPanel;
+#if OLD_UNITY
+	int mVisibleFlag = -1;
+#else
+	bool mVisibleByPanel = true;
+	float mLastAlpha = 0f;
+#endif
+	// Widget's generated geometry
+	UIGeometry mGeom = new UIGeometry();
 
-	protected Transform mTrans;
+	/// <summary>
+	/// Whether the widget is visible.
+	/// </summary>
 
-	private bool mVisibleByPanel = true;
+#if OLD_UNITY
+	public bool isVisible { get { return finalAlpha > 0.001f; } }
+#else
+	public bool isVisible { get { return mVisibleByPanel && finalAlpha > 0.001f; } }
+#endif
 
-	public float alpha
+	/// <summary>
+	/// Color used by the widget.
+	/// </summary>
+
+	public Color color { get { return mColor; } set { if (!mColor.Equals(value)) { mColor = value; mChanged = true; } } }
+
+	/// <summary>
+	/// Widget's alpha -- a convenience method.
+	/// </summary>
+
+	public float alpha { get { return mColor.a; } set { Color c = mColor; c.a = value; color = c; } }
+
+	/// <summary>
+	/// Widget's final alpha, after taking the panel's alpha into account.
+	/// </summary>
+
+	public float finalAlpha { get { if (mPanel == null) CreatePanel(); return (mPanel != null) ? mColor.a * mPanel.alpha : mColor.a; } }
+
+	/// <summary>
+	/// Set or get the value that specifies where the widget's pivot point should be.
+	/// </summary>
+
+	public Pivot pivot
 	{
 		get
 		{
-			return mColor.a;
+			return mPivot;
 		}
 		set
 		{
-			Color color = mColor;
-			color.a = value;
-			this.color = color;
-		}
-	}
-
-	public virtual Vector4 border
-	{
-		get
-		{
-			return Vector4.zero;
-		}
-	}
-
-	public GameObject cachedGameObject
-	{
-		get
-		{
-			if (mGo == null)
+			if (mPivot != value)
 			{
-				mGo = base.gameObject;
-			}
-			return mGo;
-		}
-	}
+				Vector3 before = NGUIMath.CalculateWidgetCorners(this)[0];
 
-	public Transform cachedTransform
-	{
-		get
-		{
-			if (mTrans == null)
-			{
-				mTrans = base.transform;
-			}
-			return mTrans;
-		}
-	}
-
-	public Color color
-	{
-		get
-		{
-			return mColor;
-		}
-		set
-		{
-			if (!mColor.Equals(value))
-			{
-				mColor = value;
+				mPivot = value;
 				mChanged = true;
+
+				Vector3 after = NGUIMath.CalculateWidgetCorners(this)[0];
+
+				Transform t = cachedTransform;
+				Vector3 pos = t.position;
+				float z = t.localPosition.z;
+				pos.x += (before.x - after.x);
+				pos.y += (before.y - after.y);
+				cachedTransform.position = pos;
+
+				pos = cachedTransform.localPosition;
+				pos.x = Mathf.Round(pos.x);
+				pos.y = Mathf.Round(pos.y);
+				pos.z = z;
+				cachedTransform.localPosition = pos;
 			}
 		}
 	}
+	
+	/// <summary>
+	/// Depth controls the rendering order -- lowest to highest.
+	/// </summary>
 
 	public int depth
 	{
@@ -143,277 +141,185 @@ public abstract class UIWidget : MonoBehaviour
 			if (mDepth != value)
 			{
 				mDepth = value;
-				if (mPanel != null)
-				{
-					mPanel.MarkMaterialAsChanged(material, true);
-				}
+				if (mPanel != null) mPanel.MarkMaterialAsChanged(material, true);
 			}
 		}
 	}
 
-	public float finalAlpha
-	{
-		get
-		{
-			if (mPanel == null)
-			{
-				CreatePanel();
-			}
-			if (!(mPanel == null))
-			{
-				return mColor.a * mPanel.alpha;
-			}
-			return mColor.a;
-		}
-	}
-
-	public bool isVisible
-	{
-		get
-		{
-			if (mVisibleByPanel)
-			{
-				return finalAlpha > 0.001f;
-			}
-			return false;
-		}
-	}
-
-	public virtual bool keepMaterial
-	{
-		get
-		{
-			return false;
-		}
-	}
-
-	public virtual Texture mainTexture
-	{
-		get
-		{
-			Material material = this.material;
-			if (material != null)
-			{
-				if (material.mainTexture != null)
-				{
-					mTex = material.mainTexture;
-				}
-				else if (mTex != null)
-				{
-					if (mPanel != null)
-					{
-						mPanel.RemoveWidget(this);
-					}
-					mPanel = null;
-					mMat.mainTexture = mTex;
-					if (base.enabled)
-					{
-						CreatePanel();
-					}
-				}
-			}
-			return mTex;
-		}
-		set
-		{
-			Material material = this.material;
-			if (!(material == null) && !(material.mainTexture != value))
-			{
-				return;
-			}
-			if (mPanel != null)
-			{
-				mPanel.RemoveWidget(this);
-			}
-			mPanel = null;
-			mTex = value;
-			material = this.material;
-			if (material != null)
-			{
-				material.mainTexture = value;
-				if (base.enabled)
-				{
-					CreatePanel();
-				}
-			}
-		}
-	}
-
-	public virtual Material material
-	{
-		get
-		{
-			return mMat;
-		}
-		set
-		{
-			if (mMat != value)
-			{
-				if (mMat != null && mPanel != null)
-				{
-					mPanel.RemoveWidget(this);
-				}
-				mPanel = null;
-				mMat = value;
-				mTex = null;
-				if (mMat != null)
-				{
-					CreatePanel();
-				}
-			}
-		}
-	}
-
-	public UIPanel panel
-	{
-		get
-		{
-			if (mPanel == null)
-			{
-				CreatePanel();
-			}
-			return mPanel;
-		}
-		set
-		{
-			mPanel = value;
-		}
-	}
-
-	public Pivot pivot
-	{
-		get
-		{
-			return mPivot;
-		}
-		set
-		{
-			if (mPivot != value)
-			{
-				Vector3 vector = NGUIMath.CalculateWidgetCorners(this)[0];
-				mPivot = value;
-				mChanged = true;
-				Vector3 vector2 = NGUIMath.CalculateWidgetCorners(this)[0];
-				Transform transform = cachedTransform;
-				Vector3 position = transform.position;
-				float z = transform.localPosition.z;
-				position.x += vector.x - vector2.x;
-				position.y += vector.y - vector2.y;
-				cachedTransform.position = position;
-				position = cachedTransform.localPosition;
-				position.x = Mathf.Round(position.x);
-				position.y = Mathf.Round(position.y);
-				position.z = z;
-				cachedTransform.localPosition = position;
-			}
-		}
-	}
+	/// <summary>
+	/// Helper function that calculates the relative offset based on the current pivot.
+	/// </summary>
 
 	public Vector2 pivotOffset
 	{
 		get
 		{
-			Vector2 zero = Vector2.zero;
-			Vector4 vector = relativePadding;
-			Pivot pivot = this.pivot;
-			switch (pivot)
+			Vector2 v = Vector2.zero;
+			Vector4 p = relativePadding;
+
+			Pivot pv = pivot;
+
+			if (pv == Pivot.Top || pv == Pivot.Center || pv == Pivot.Bottom) v.x = (p.x - p.z - 1f) * 0.5f;
+			else if (pv == Pivot.TopRight || pv == Pivot.Right || pv == Pivot.BottomRight) v.x = -1f - p.z;
+			else v.x = p.x;
+
+			if (pv == Pivot.Left || pv == Pivot.Center || pv == Pivot.Right) v.y = (p.w - p.y + 1f) * 0.5f;
+			else if (pv == Pivot.BottomLeft || pv == Pivot.Bottom || pv == Pivot.BottomRight) v.y = 1f + p.w;
+			else v.y = -p.y;
+
+			return v;
+		}
+	}
+
+	/// <summary>
+	/// Game object gets cached for speed. Can't simply return 'mGo' set in Awake because this function may be called on a prefab.
+	/// </summary>
+
+	public GameObject cachedGameObject { get { if (mGo == null) mGo = gameObject; return mGo; } }
+
+	/// <summary>
+	/// Transform gets cached for speed. Can't simply return 'mTrans' set in Awake because this function may be called on a prefab.
+	/// </summary>
+
+	public Transform cachedTransform { get { if (mTrans == null) mTrans = transform; return mTrans; } }
+
+	/// <summary>
+	/// Material used by the widget.
+	/// </summary>
+
+	public virtual Material material
+	{
+		get
+		{
+			return null;
+		}
+		set
+		{
+			throw new System.NotImplementedException(GetType() + " has no material setter");
+		}
+	}
+
+	/// <summary>
+	/// Texture used by the widget.
+	/// </summary>
+
+	public virtual Texture mainTexture
+	{
+		get
+		{
+			Material mat = material;
+			return (mat != null) ? mat.mainTexture : null;
+		}
+		set
+		{
+			throw new System.NotImplementedException(GetType() + " has no mainTexture setter");
+		}
+	}
+
+	/// <summary>
+	/// Returns the UI panel responsible for this widget.
+	/// </summary>
+
+	public UIPanel panel { get { if (mPanel == null) CreatePanel(); return mPanel; } set { mPanel = value; } }
+
+#if OLD_UNITY
+	/// <summary>
+	/// Flag set by the UIPanel and used in optimization checks.
+	/// </summary>
+
+	public int visibleFlag { get { return mVisibleFlag; } set { mVisibleFlag = value; } }
+#endif
+
+	/// <summary>
+	/// Raycast into the screen and return a list of widgets in order from closest to farthest away.
+	/// This is a slow operation and will consider ALL widgets underneath the specified game object.
+	/// </summary>
+
+	static public BetterList<UIWidget> Raycast (GameObject root, Vector2 mousePos)
+	{
+		BetterList<UIWidget> list = new BetterList<UIWidget>();
+		UICamera uiCam = UICamera.FindCameraForLayer(root.layer);
+
+		if (uiCam != null)
+		{
+			Camera cam = uiCam.cachedCamera;
+			UIWidget[] widgets = root.GetComponentsInChildren<UIWidget>();
+
+			for (int i = 0; i < widgets.Length; ++i)
 			{
-			case Pivot.Top:
-			case Pivot.Center:
-			case Pivot.Bottom:
-				zero.x = (vector.x - vector.z - 1f) * 0.5f;
-				break;
-			case Pivot.TopRight:
-			case Pivot.Right:
-			case Pivot.BottomRight:
-				zero.x = -1f - vector.z;
-				break;
-			default:
-				zero.x = vector.x;
-				break;
+				UIWidget w = widgets[i];
+
+				Vector3[] corners = NGUIMath.CalculateWidgetCorners(w);
+				if (NGUIMath.DistanceToRectangle(corners, mousePos, cam) == 0f)
+					list.Add(w);
 			}
-			switch (pivot)
-			{
-			case Pivot.Left:
-			case Pivot.Center:
-			case Pivot.Right:
-				zero.y = (vector.w - vector.y + 1f) * 0.5f;
-				return zero;
-			case Pivot.BottomLeft:
-			case Pivot.Bottom:
-			case Pivot.BottomRight:
-				zero.y = 1f + vector.w;
-				return zero;
-			default:
-				zero.y = 0f - vector.y;
-				return zero;
-			}
+
+			list.Sort(delegate(UIWidget w1, UIWidget w2) { return w2.mDepth.CompareTo(w1.mDepth); });
 		}
+		return list;
 	}
 
-	public virtual bool pixelPerfectAfterResize
-	{
-		get
-		{
-			return false;
-		}
-	}
+	/// <summary>
+	/// Static widget comparison function used for Z-sorting.
+	/// </summary>
 
-	public virtual Vector4 relativePadding
+	static public int CompareFunc (UIWidget left, UIWidget right)
 	{
-		get
-		{
-			return Vector4.zero;
-		}
-	}
-
-	public virtual Vector2 relativeSize
-	{
-		get
-		{
-			return Vector2.one;
-		}
-	}
-
-	protected virtual void Awake()
-	{
-		mGo = base.gameObject;
-		mPlayMode = Application.isPlaying;
-	}
-
-	public void CheckLayer()
-	{
-		if (mPanel != null && mPanel.gameObject.layer != base.gameObject.layer)
-		{
-			Debug.LogWarning("You can't place widgets on a layer different than the UIPanel that manages them.\nIf you want to move widgets to a different layer, parent them to a new panel instead.", this);
-			base.gameObject.layer = mPanel.gameObject.layer;
-		}
-	}
-
-	[Obsolete("Use ParentHasChanged() instead")]
-	public void CheckParent()
-	{
-		ParentHasChanged();
-	}
-
-	public static int CompareFunc(UIWidget left, UIWidget right)
-	{
-		if (left.mDepth > right.mDepth)
-		{
-			return 1;
-		}
-		if (left.mDepth < right.mDepth)
-		{
-			return -1;
-		}
+		if (left.mDepth > right.mDepth) return 1;
+		if (left.mDepth < right.mDepth) return -1;
 		return 0;
 	}
 
-	public void CreatePanel()
+	/// <summary>
+	/// Remove this widget from the panel.
+	/// </summary>
+
+	protected void RemoveFromPanel ()
 	{
-		if (mPanel == null && base.enabled && NGUITools.GetActive(base.gameObject) && material != null)
+		if (mPanel != null)
 		{
-			mPanel = UIPanel.Find(cachedTransform);
+			mPanel.RemoveWidget(this);
+			mPanel = null;
+		}
+	}
+
+	/// <summary>
+	/// Only sets the local flag, does not notify the panel.
+	/// In most cases you will want to use MarkAsChanged() instead.
+	/// </summary>
+
+	public void MarkAsChangedLite () { mChanged = true; }
+
+	/// <summary>
+	/// Tell the panel responsible for the widget that something has changed and the buffers need to be rebuilt.
+	/// </summary>
+
+	public virtual void MarkAsChanged ()
+	{
+		mChanged = true;
+
+		// If we're in the editor, update the panel right away so its geometry gets updated.
+		if (mPanel != null && enabled && NGUITools.GetActive(gameObject) && !Application.isPlaying && material != null)
+		{
+			mPanel.AddWidget(this);
+			CheckLayer();
+#if UNITY_EDITOR
+			// Mark the panel as dirty so it gets updated
+			UnityEditor.EditorUtility.SetDirty(mPanel.gameObject);
+#endif
+		}
+	}
+
+	/// <summary>
+	/// Ensure we have a panel referencing this widget.
+	/// </summary>
+
+	public void CreatePanel ()
+	{
+		if (mPanel == null && enabled && NGUITools.GetActive(gameObject) && material != null)
+		{
+			mPanel = UIPanel.Find(cachedTransform, mStarted);
+
 			if (mPanel != null)
 			{
 				CheckLayer();
@@ -423,234 +329,456 @@ public abstract class UIWidget : MonoBehaviour
 		}
 	}
 
-	public virtual void MakePixelPerfect()
-	{
-		Vector3 localScale = cachedTransform.localScale;
-		int num = Mathf.RoundToInt(localScale.x);
-		int num2 = Mathf.RoundToInt(localScale.y);
-		localScale.x = num;
-		localScale.y = num2;
-		localScale.z = 1f;
-		Vector3 localPosition = cachedTransform.localPosition;
-		localPosition.z = Mathf.RoundToInt(localPosition.z);
-		if (num % 2 == 1 && (pivot == Pivot.Top || pivot == Pivot.Center || pivot == Pivot.Bottom))
-		{
-			localPosition.x = Mathf.Floor(localPosition.x) + 0.5f;
-		}
-		else
-		{
-			localPosition.x = Mathf.Round(localPosition.x);
-		}
-		if (num2 % 2 == 1 && (pivot == Pivot.Left || pivot == Pivot.Center || pivot == Pivot.Right))
-		{
-			localPosition.y = Mathf.Ceil(localPosition.y) - 0.5f;
-		}
-		else
-		{
-			localPosition.y = Mathf.Round(localPosition.y);
-		}
-		cachedTransform.localPosition = localPosition;
-		cachedTransform.localScale = localScale;
-	}
+	/// <summary>
+	/// Check to ensure that the widget resides on the same layer as its panel.
+	/// </summary>
 
-	public virtual void MarkAsChanged()
+	public void CheckLayer ()
 	{
-		mChanged = true;
-		if (mPanel != null && base.enabled && NGUITools.GetActive(base.gameObject) && !Application.isPlaying && material != null)
+		if (mPanel != null && mPanel.gameObject.layer != gameObject.layer)
 		{
-			mPanel.AddWidget(this);
-			CheckLayer();
+			Debug.LogWarning("You can't place widgets on a layer different than the UIPanel that manages them.\n" +
+				"If you want to move widgets to a different layer, parent them to a new panel instead.", this);
+			gameObject.layer = mPanel.gameObject.layer;
 		}
 	}
 
-	public void MarkAsChangedLite()
-	{
-		mChanged = true;
-	}
+	/// <summary>
+	/// For backwards compatibility. Use ParentHasChanged() instead.
+	/// </summary>
 
-	private void OnDestroy()
+	[System.Obsolete("Use ParentHasChanged() instead")]
+	public void CheckParent () { ParentHasChanged(); }
+
+	/// <summary>
+	/// Checks to ensure that the widget is still parented to the right panel.
+	/// </summary>
+
+	public void ParentHasChanged ()
 	{
 		if (mPanel != null)
 		{
-			mPanel.RemoveWidget(this);
+#if OLD_UNITY
+			// This code allows drag & dropping of widgets onto different panels in the editor.
+			bool valid = true;
+			Transform t = cachedTransform.parent;
+
+			// Run through the parents and see if this widget is still parented to the transform
+			while (t != null)
+			{
+				if (t == mPanel.cachedTransform) break;
+				if (!mPanel.WatchesTransform(t)) { valid = false; break; }
+				t = t.parent;
+			}
+
+			// This widget is no longer parented to the same panel. Remove it and re-add it to a new one.
+			if (!valid)
+			{
+				RemoveFromPanel();
+				CreatePanel();
+			}
+#else
+			UIPanel p = UIPanel.Find(cachedTransform);
+
+			if (mPanel != p)
+			{
+				RemoveFromPanel();
+				CreatePanel();
+			}
+#endif
+		}
+	}
+
+	/// <summary>
+	/// Remember whether we're in play mode.
+	/// </summary>
+
+	protected virtual void Awake ()
+	{
+		mGo = gameObject;
+		mPlayMode = Application.isPlaying;
+	}
+
+	/// <summary>
+	/// Mark the widget and the panel as having been changed.
+	/// </summary>
+
+	protected virtual void OnEnable ()
+	{
+#if UNITY_EDITOR
+		if (GetComponents<UIWidget>().Length > 1)
+		{
+			Debug.LogError("Can't have more than one widget on the same game object!", this);
+			enabled = false;
+		}
+		else
+#endif
+		{
+			list.Add(this);
+			mChanged = true;
 			mPanel = null;
 		}
 	}
 
-	private void OnDisable()
-	{
-		if (!keepMaterial)
-		{
-			material = null;
-		}
-		else if (mPanel != null)
-		{
-			mPanel.RemoveWidget(this);
-		}
-		mPanel = null;
-	}
+	/// <summary>
+	/// Set the depth, call the virtual start function, and sure we have a panel to work with.
+	/// </summary>
 
-	protected virtual void OnEnable()
+	void Start ()
 	{
-		mChanged = true;
-		if (!keepMaterial)
-		{
-			mMat = null;
-			mTex = null;
-		}
-		mPanel = null;
-	}
-
-	public virtual void OnFill(BetterList<Vector3> verts, BetterList<Vector2> uvs, BetterList<Color32> cols)
-	{
-	}
-
-	protected virtual void OnStart()
-	{
-	}
-
-	public void ParentHasChanged()
-	{
-		if (!(mPanel != null))
-		{
-			return;
-		}
-		UIPanel uIPanel = UIPanel.Find(cachedTransform);
-		if (mPanel != uIPanel)
-		{
-			mPanel.RemoveWidget(this);
-			if (!keepMaterial || Application.isPlaying)
-			{
-				material = null;
-			}
-			mPanel = null;
-			CreatePanel();
-		}
-	}
-
-	public static BetterList<UIWidget> Raycast(GameObject root, Vector2 mousePos)
-	{
-		BetterList<UIWidget> betterList = new BetterList<UIWidget>();
-		UICamera uICamera = UICamera.FindCameraForLayer(root.layer);
-		if (uICamera != null)
-		{
-			Camera cachedCamera = uICamera.cachedCamera;
-			UIWidget[] componentsInChildren = root.GetComponentsInChildren<UIWidget>();
-			foreach (UIWidget uIWidget in componentsInChildren)
-			{
-				if (NGUIMath.DistanceToRectangle(NGUIMath.CalculateWidgetCorners(uIWidget), mousePos, cachedCamera) == 0f)
-				{
-					betterList.Add(uIWidget);
-				}
-			}
-			betterList.Sort((UIWidget w1, UIWidget w2) => w2.mDepth.CompareTo(w1.mDepth));
-		}
-		return betterList;
-	}
-
-	private void Start()
-	{
+		mStarted = true;
 		OnStart();
 		CreatePanel();
 	}
 
-	public virtual void Update()
+	/// <summary>
+	/// Ensure that we have a panel to work with. The reason the panel isn't added in OnEnable()
+	/// is because OnEnable() is called right after Awake(), which is a problem when the widget
+	/// is brought in on a prefab object as it happens before it gets parented.
+	/// </summary>
+
+	public virtual void Update ()
 	{
-		if (mPanel == null)
+		// Ensure we have a panel to work with by now
+		if (mPanel == null) CreatePanel();
+#if UNITY_EDITOR
+		else if (!Application.isPlaying) ParentHasChanged();
+#endif
+	}
+
+	/// <summary>
+	/// Clear references.
+	/// </summary>
+
+	protected virtual void OnDisable ()
+	{
+		list.Remove(this);
+		RemoveFromPanel();
+	}
+
+	/// <summary>
+	/// Unregister this widget.
+	/// </summary>
+
+	void OnDestroy () { RemoveFromPanel(); }
+
+#if UNITY_EDITOR
+
+	static int mHandles = -1;
+
+	/// <summary>
+	/// Whether widgets will show handles with the Move Tool, or just the View Tool.
+	/// </summary>
+
+	static public bool showHandlesWithMoveTool
+	{
+		get
 		{
-			CreatePanel();
+			if (mHandles == -1)
+			{
+				mHandles = UnityEditor.EditorPrefs.GetInt("NGUI Handles", 1);
+			}
+			return (mHandles == 1);
+		}
+		set
+		{
+			int val = value ? 1 : 0;
+
+			if (mHandles != val)
+			{
+				mHandles = val;
+				UnityEditor.EditorPrefs.SetInt("NGUI Handles", mHandles);
+			}
 		}
 	}
 
-	public bool UpdateGeometry(UIPanel p, bool forceVisible)
+	/// <summary>
+	/// Whether the widget should have some form of handles shown.
+	/// </summary>
+
+	static public bool showHandles
+	{
+		get
+		{
+			if (showHandlesWithMoveTool)
+			{
+				return UnityEditor.Tools.current == UnityEditor.Tool.Move;
+			}
+			return UnityEditor.Tools.current == UnityEditor.Tool.View;
+		}
+	}
+
+	/// <summary>
+	/// Whether handles should be shown around the widget for easy scaling and resizing.
+	/// </summary>
+
+	public virtual bool showResizeHandles { get { return true; } }
+
+	/// <summary>
+	/// Draw some selectable gizmos.
+	/// </summary>
+
+	void OnDrawGizmos ()
+	{
+#if OLD_UNITY
+		if (mVisibleFlag != 0 && mPanel != null && mPanel.debugInfo == UIPanel.DebugInfo.Gizmos)
+#else
+		if (isVisible && mPanel != null && mPanel.debugInfo == UIPanel.DebugInfo.Gizmos)
+#endif
+		{
+			if (UnityEditor.Selection.activeGameObject == gameObject && showHandles) return;
+
+			Color outline = new Color(1f, 1f, 1f, 0.2f);
+
+			// Position should be offset by depth so that the selection works properly
+			Vector3 pos = Vector3.zero;
+			pos.z -= mDepth * 0.25f;
+
+			Vector3 size = relativeSize;
+			Vector2 offset = pivotOffset;
+			Vector4 padding = relativePadding;
+
+			float x0 = offset.x * size.x - padding.x;
+			float y0 = offset.y * size.y + padding.y;
+
+			float x1 = x0 + size.x + padding.x + padding.z;
+			float y1 = y0 - size.y - padding.y - padding.w;
+
+			pos.x = (x0 + x1) * 0.5f;
+			pos.y = (y0 + y1) * 0.5f;
+
+			size.x = (x1 - x0);
+			size.y = (y1 - y0);
+
+			// Draw the gizmo
+			Gizmos.matrix = cachedTransform.localToWorldMatrix;
+			Gizmos.color = (UnityEditor.Selection.activeGameObject == gameObject) ? Color.green : outline;
+			Gizmos.DrawWireCube(pos, size);
+
+			// Make the widget selectable
+			size.z = 0.01f;
+			Gizmos.color = Color.clear;
+			Gizmos.DrawCube(pos, size);
+		}
+	}
+#endif
+
+#if OLD_UNITY
+	/// <summary>
+	/// Update the widget and fill its geometry if necessary. Returns whether something was changed.
+	/// </summary>
+
+	public bool UpdateGeometry (UIPanel p, ref Matrix4x4 worldToPanel, bool parentMoved, bool generateNormals)
+#else
+	bool mForceVisible = false;
+	Vector3 mOldV0;
+	Vector3 mOldV1;
+
+	/// <summary>
+	/// Update the widget and fill its geometry if necessary. Returns whether something was changed.
+	/// </summary>
+
+	public bool UpdateGeometry (UIPanel p, bool forceVisible)
+#endif
 	{
 		if (material != null && p != null)
 		{
 			mPanel = p;
-			bool flag = false;
-			float num = finalAlpha;
-			bool flag2 = num > 0.001f;
-			bool flag3 = forceVisible || mVisibleByPanel;
+			bool hasMatrix = false;
+#if !OLD_UNITY
+			float final = finalAlpha;
+			bool visibleByAlpha = (final > 0.001f);
+			bool visibleByPanel = forceVisible || mVisibleByPanel;
+
+			// Has transform moved?
 			if (cachedTransform.hasChanged)
 			{
 				mTrans.hasChanged = false;
+				
+				// Check to see if the widget has moved relative to the panel that manages it
+#if UNITY_EDITOR
+				if (!mPanel.widgetsAreStatic || !Application.isPlaying)
+#else
 				if (!mPanel.widgetsAreStatic)
+#endif
 				{
-					Vector2 vector = relativeSize;
-					Vector2 vector2 = pivotOffset;
-					Vector4 vector3 = relativePadding;
-					float num2 = vector2.x * vector.x - vector3.x;
-					float num3 = vector2.y * vector.y + vector3.y;
-					float x = num2 + vector.x + vector3.x + vector3.z;
-					float y = num3 - vector.y - vector3.y - vector3.w;
+					Vector2 size = relativeSize;
+					Vector2 offset = pivotOffset;
+					Vector4 padding = relativePadding;
+
+					float x0 = offset.x * size.x - padding.x;
+					float y0 = offset.y * size.y + padding.y;
+
+					float x1 = x0 + size.x + padding.x + padding.z;
+					float y1 = y0 - size.y - padding.y - padding.w;
+
 					mLocalToPanel = p.worldToLocal * cachedTransform.localToWorldMatrix;
-					flag = true;
-					Vector3 v = new Vector3(num2, num3, 0f);
-					Vector3 v2 = new Vector3(x, y, 0f);
-					v = mLocalToPanel.MultiplyPoint3x4(v);
-					v2 = mLocalToPanel.MultiplyPoint3x4(v2);
-					if (Vector3.SqrMagnitude(mOldV0 - v) > 1E-06f || Vector3.SqrMagnitude(mOldV1 - v2) > 1E-06f)
+					hasMatrix = true;
+
+					Vector3 v0 = new Vector3(x0, y0, 0f);
+					Vector3 v1 = new Vector3(x1, y1, 0f);
+
+					v0 = mLocalToPanel.MultiplyPoint3x4(v0);
+					v1 = mLocalToPanel.MultiplyPoint3x4(v1);
+
+					if (Vector3.SqrMagnitude(mOldV0 - v0) > 0.000001f || Vector3.SqrMagnitude(mOldV1 - v1) > 0.000001f)
 					{
 						mChanged = true;
-						mOldV0 = v;
-						mOldV1 = v2;
+						mOldV0 = v0;
+						mOldV1 = v1;
 					}
 				}
-				if (flag2 || mForceVisible != forceVisible)
+
+				// Is the widget visible by the panel?
+				if (visibleByAlpha || mForceVisible != forceVisible)
 				{
 					mForceVisible = forceVisible;
-					flag3 = forceVisible || mPanel.IsVisible(this);
+					visibleByPanel = forceVisible || mPanel.IsVisible(this);
 				}
 			}
-			else if (flag2 && mForceVisible != forceVisible)
+			else if (visibleByAlpha && mForceVisible != forceVisible)
 			{
 				mForceVisible = forceVisible;
-				flag3 = mPanel.IsVisible(this);
+				visibleByPanel = mPanel.IsVisible(this);
 			}
-			if (mVisibleByPanel != flag3)
+
+			// Is the visibility changing?
+			if (mVisibleByPanel != visibleByPanel)
 			{
-				mVisibleByPanel = flag3;
+				mVisibleByPanel = visibleByPanel;
 				mChanged = true;
 			}
-			if (mVisibleByPanel && mLastAlpha != num)
-			{
-				mChanged = true;
-			}
-			mLastAlpha = num;
+
+			// Has the alpha changed?
+			if (mVisibleByPanel && mLastAlpha != final) mChanged = true;
+			mLastAlpha = final;
+#endif
 			if (mChanged)
 			{
 				mChanged = false;
+
 				if (isVisible)
 				{
 					mGeom.Clear();
 					OnFill(mGeom.verts, mGeom.uvs, mGeom.cols);
+
+					// Want to see what's being filled? Uncomment this line.
+					//Debug.Log("Fill " + name + " (" + Time.time + ")");
+
 					if (mGeom.hasVertices)
 					{
-						Vector3 vector4 = pivotOffset;
-						Vector2 vector5 = relativeSize;
-						vector4.x *= vector5.x;
-						vector4.y *= vector5.y;
-						if (!flag)
-						{
-							mLocalToPanel = p.worldToLocal * cachedTransform.localToWorldMatrix;
-						}
-						mGeom.ApplyOffset(vector4);
-						mGeom.ApplyTransform(mLocalToPanel, p.generateNormals);
+						Vector3 offset = pivotOffset;
+						Vector2 scale = relativeSize;
+
+						offset.x *= scale.x;
+						offset.y *= scale.y;
+
+						if (!hasMatrix) mLocalToPanel = p.worldToLocal * cachedTransform.localToWorldMatrix;
+
+						mGeom.ApplyOffset(offset);
+						mGeom.ApplyTransform(mLocalToPanel);
 					}
 					return true;
 				}
-				if (mGeom.hasVertices)
+				else if (mGeom.hasVertices)
 				{
 					mGeom.Clear();
 					return true;
 				}
 			}
+#if OLD_UNITY
+			else if (parentMoved && mGeom.hasVertices)
+			{
+				mGeom.ApplyTransform(p.worldToLocal * cachedTransform.localToWorldMatrix);
+			}
+#endif
 		}
 		return false;
 	}
 
-	public void WriteToBuffers(BetterList<Vector3> v, BetterList<Vector2> u, BetterList<Color32> c, BetterList<Vector3> n, BetterList<Vector4> t)
+	/// <summary>
+	/// Append the local geometry buffers to the specified ones.
+	/// </summary>
+
+	public void WriteToBuffers (BetterList<Vector3> v, BetterList<Vector2> u, BetterList<Color32> c, BetterList<Vector3> n, BetterList<Vector4> t)
 	{
 		mGeom.WriteToBuffers(v, u, c, n, t);
 	}
+
+	/// <summary>
+	/// Make the widget pixel-perfect.
+	/// </summary>
+
+	virtual public void MakePixelPerfect ()
+	{
+		Vector3 scale = cachedTransform.localScale;
+
+		int width  = Mathf.RoundToInt(scale.x);
+		int height = Mathf.RoundToInt(scale.y);
+
+		scale.x = width;
+		scale.y = height;
+		scale.z = 1f;
+
+		Vector3 pos = cachedTransform.localPosition;
+		pos.z = Mathf.RoundToInt(pos.z);
+
+		if (width % 2 == 1 && (pivot == Pivot.Top || pivot == Pivot.Center || pivot == Pivot.Bottom))
+		{
+			pos.x = Mathf.Floor(pos.x) + 0.5f;
+		}
+		else
+		{
+			pos.x = Mathf.Round(pos.x);
+		}
+
+		if (height % 2 == 1 && (pivot == Pivot.Left || pivot == Pivot.Center || pivot == Pivot.Right))
+		{
+			pos.y = Mathf.Ceil(pos.y) - 0.5f;
+		}
+		else
+		{
+			pos.y = Mathf.Round(pos.y);
+		}
+
+		cachedTransform.localPosition = pos;
+		cachedTransform.localScale = scale;
+	}
+
+	/// <summary>
+	/// Visible size of the widget in relative coordinates. In most cases this can remain at (1, 1).
+	/// If you want to figure out the widget's size in pixels, scale this value by cachedTransform.localScale.
+	/// </summary>
+
+	virtual public Vector2 relativeSize { get { return Vector2.one; } }
+
+	/// <summary>
+	/// Extra padding around the sprite, in pixels.
+	/// </summary>
+
+	virtual public Vector4 relativePadding { get { return Vector4.zero; } }
+
+	/// <summary>
+	/// Dimensions of the sprite's border, if any.
+	/// </summary>
+
+	virtual public Vector4 border { get { return Vector4.zero; } }
+
+	/// <summary>
+	/// Whether this widget will automatically become pixel-perfect after resize operation finishes.
+	/// </summary>
+
+	virtual public bool pixelPerfectAfterResize { get { return false; } }
+
+	/// <summary>
+	/// Virtual Start() functionality for widgets.
+	/// </summary>
+
+	virtual protected void OnStart () { }
+
+	/// <summary>
+	/// Virtual function called by the UIPanel that fills the buffers.
+	/// </summary>
+
+	virtual public void OnFill(BetterList<Vector3> verts, BetterList<Vector2> uvs, BetterList<Color32> cols) { }
 }

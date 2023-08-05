@@ -1,68 +1,64 @@
+//----------------------------------------------
+//            NGUI: Next-Gen UI kit
+// Copyright © 2011-2013 Tasharen Entertainment
+//----------------------------------------------
+
 using UnityEngine;
+using System.Collections.Generic;
+
+/// <summary>
+/// Generated geometry class. All widgets have one.
+/// This class separates the geometry creation into several steps, making it possible to perform
+/// actions selectively depending on what has changed. For example, the widget doesn't need to be
+/// rebuilt unless something actually changes, so its geometry can be cached. Likewise, the widget's
+/// transformed coordinates only change if the widget's transform moves relative to the panel,
+/// so that can be cached as well. In the end, using this class means using more memory, but at
+/// the same time it allows for significant performance gains, especially when using widgets that
+/// spit out a lot of vertices, such as UILabels.
+/// </summary>
 
 public class UIGeometry
 {
-	public BetterList<Color32> cols = new BetterList<Color32>();
-
-	private Vector3 mRtpNormal;
-
-	private Vector4 mRtpTan;
-
-	private BetterList<Vector3> mRtpVerts = new BetterList<Vector3>();
-
-	public BetterList<Vector2> uvs = new BetterList<Vector2>();
+	/// <summary>
+	/// Widget's vertices (before they get transformed).
+	/// </summary>
 
 	public BetterList<Vector3> verts = new BetterList<Vector3>();
 
-	public bool hasTransformed
-	{
-		get
-		{
-			if (mRtpVerts != null && mRtpVerts.size > 0)
-			{
-				return mRtpVerts.size == verts.size;
-			}
-			return false;
-		}
-	}
+	/// <summary>
+	/// Widget's texture coordinates for the geometry's vertices.
+	/// </summary>
 
-	public bool hasVertices
-	{
-		get
-		{
-			return verts.size > 0;
-		}
-	}
+	public BetterList<Vector2> uvs = new BetterList<Vector2>();
 
-	public void ApplyOffset(Vector3 pivotOffset)
-	{
-		for (int i = 0; i < verts.size; i++)
-		{
-			verts.buffer[i] += pivotOffset;
-		}
-	}
+	/// <summary>
+	/// Array of colors for the geometry's vertices.
+	/// </summary>
 
-	public void ApplyTransform(Matrix4x4 widgetToPanel, bool normals)
-	{
-		if (verts.size > 0)
-		{
-			mRtpVerts.Clear();
-			int i = 0;
-			for (int size = verts.size; i < size; i++)
-			{
-				mRtpVerts.Add(widgetToPanel.MultiplyPoint3x4(verts[i]));
-			}
-			mRtpNormal = widgetToPanel.MultiplyVector(Vector3.back).normalized;
-			Vector3 normalized = widgetToPanel.MultiplyVector(Vector3.right).normalized;
-			mRtpTan = new Vector4(normalized.x, normalized.y, normalized.z, -1f);
-		}
-		else
-		{
-			mRtpVerts.Clear();
-		}
-	}
+	public BetterList<Color32> cols = new BetterList<Color32>();
 
-	public void Clear()
+	// Relative-to-panel vertices, normal, and tangent
+	BetterList<Vector3> mRtpVerts = new BetterList<Vector3>();
+	Vector3 mRtpNormal;
+	Vector4 mRtpTan;
+
+	/// <summary>
+	/// Whether the geometry contains usable vertices.
+	/// </summary>
+
+	public bool hasVertices { get { return (verts.size > 0); } }
+
+	/// <summary>
+	/// Whether the geometry has usable transformed vertex data.
+	/// </summary>
+
+	public bool hasTransformed { get { return (mRtpVerts != null) && (mRtpVerts.size > 0) && (mRtpVerts.size == verts.size); } }
+
+	/// <summary>
+	/// Step 1: Prepare to fill the buffers -- make them clean and valid.
+	/// </summary>
+
+	public void Clear ()
 	{
 		verts.Clear();
 		uvs.Clear();
@@ -70,29 +66,62 @@ public class UIGeometry
 		mRtpVerts.Clear();
 	}
 
-	public void WriteToBuffers(BetterList<Vector3> v, BetterList<Vector2> u, BetterList<Color32> c, BetterList<Vector3> n, BetterList<Vector4> t)
+	/// <summary>
+	/// Step 2: After the buffers have been filled, apply the specified pivot offset to the generated geometry.
+	/// </summary>
+
+	public void ApplyOffset (Vector3 pivotOffset)
 	{
-		if (mRtpVerts == null || mRtpVerts.size <= 0)
+		for (int i = 0; i < verts.size; ++i) verts.buffer[i] += pivotOffset;
+	}
+
+	/// <summary>
+	/// Step 3: Transform the vertices by the provided matrix.
+	/// </summary>
+
+	public void ApplyTransform (Matrix4x4 widgetToPanel)
+	{
+		if (verts.size > 0)
 		{
-			return;
+			mRtpVerts.Clear();
+			for (int i = 0, imax = verts.size; i < imax; ++i) mRtpVerts.Add(widgetToPanel.MultiplyPoint3x4(verts[i]));
+
+			// Calculate the widget's normal and tangent
+			mRtpNormal = widgetToPanel.MultiplyVector(Vector3.back).normalized;
+			Vector3 tangent = widgetToPanel.MultiplyVector(Vector3.right).normalized;
+			mRtpTan = new Vector4(tangent.x, tangent.y, tangent.z, -1f);
 		}
-		if (n == null)
+		else mRtpVerts.Clear();
+	}
+
+	/// <summary>
+	/// Step 4: Fill the specified buffer using the transformed values.
+	/// </summary>
+
+	public void WriteToBuffers (BetterList<Vector3> v, BetterList<Vector2> u, BetterList<Color32> c, BetterList<Vector3> n, BetterList<Vector4> t)
+	{
+		if (mRtpVerts != null && mRtpVerts.size > 0)
 		{
-			for (int i = 0; i < mRtpVerts.size; i++)
+			if (n == null)
 			{
-				v.Add(mRtpVerts.buffer[i]);
-				u.Add(uvs.buffer[i]);
-				c.Add(cols.buffer[i]);
+				for (int i = 0; i < mRtpVerts.size; ++i)
+				{
+					v.Add(mRtpVerts.buffer[i]);
+					u.Add(uvs.buffer[i]);
+					c.Add(cols.buffer[i]);
+				}
 			}
-			return;
-		}
-		for (int j = 0; j < mRtpVerts.size; j++)
-		{
-			v.Add(mRtpVerts.buffer[j]);
-			u.Add(uvs.buffer[j]);
-			c.Add(cols.buffer[j]);
-			n.Add(mRtpNormal);
-			t.Add(mRtpTan);
+			else
+			{
+				for (int i = 0; i < mRtpVerts.size; ++i)
+				{
+					v.Add(mRtpVerts.buffer[i]);
+					u.Add(uvs.buffer[i]);
+					c.Add(cols.buffer[i]);
+					n.Add(mRtpNormal);
+					t.Add(mRtpTan);
+				}
+			}
 		}
 	}
 }

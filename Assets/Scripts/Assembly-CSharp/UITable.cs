@@ -1,41 +1,52 @@
-using System.Collections.Generic;
+//----------------------------------------------
+//            NGUI: Next-Gen UI kit
+// Copyright © 2011-2013 Tasharen Entertainment
+//----------------------------------------------
+
 using UnityEngine;
+using System.Collections.Generic;
+
+/// <summary>
+/// All children added to the game object with this script will be arranged into a table
+/// with rows and columns automatically adjusting their size to fit their content
+/// (think "table" tag in HTML).
+/// </summary>
 
 [ExecuteInEditMode]
 [AddComponentMenu("NGUI/Interaction/Table")]
 public class UITable : MonoBehaviour
 {
+	public delegate void OnReposition ();
+
 	public enum Direction
 	{
-		Down = 0,
-		Up = 1
+		Down,
+		Up,
 	}
 
-	public delegate void OnReposition();
-
-	public int columns;
-
-	public Direction direction;
-
+	public int columns = 0;
+	public Direction direction = Direction.Down;
+	public Vector2 padding = Vector2.zero;
+	public bool sorted = false;
 	public bool hideInactive = true;
-
-	public bool keepWithinPanel;
-
-	private List<Transform> mChildren = new List<Transform>();
-
-	private UIDraggablePanel mDrag;
-
-	private UIPanel mPanel;
-
-	private bool mStarted;
-
+	public bool repositionNow = false;
+	public bool keepWithinPanel = false;
 	public OnReposition onReposition;
 
-	public Vector2 padding = Vector2.zero;
+	UIPanel mPanel;
+	UIDraggablePanel mDrag;
+	bool mStarted = false;
+	List<Transform> mChildren = new List<Transform>();
 
-	public bool repositionNow;
+	/// <summary>
+	/// Function that sorts items by name.
+	/// </summary>
 
-	public bool sorted;
+	static public int SortByName (Transform a, Transform b) { return string.Compare(a.name, b.name); }
+
+	/// <summary>
+	/// Returns the list of table's children, sorted alphabetically if necessary.
+	/// </summary>
 
 	public List<Transform> children
 	{
@@ -43,45 +54,113 @@ public class UITable : MonoBehaviour
 		{
 			if (mChildren.Count == 0)
 			{
-				Transform transform = base.transform;
+				Transform myTrans = transform;
 				mChildren.Clear();
-				for (int i = 0; i < transform.childCount; i++)
+
+				for (int i = 0; i < myTrans.childCount; ++i)
 				{
-					Transform child = transform.GetChild(i);
-					if (child != null && child.gameObject != null && (!hideInactive || NGUITools.GetActive(child.gameObject)))
-					{
-						mChildren.Add(child);
-					}
+					Transform child = myTrans.GetChild(i);
+
+					if (child && child.gameObject && (!hideInactive || NGUITools.GetActive(child.gameObject))) mChildren.Add(child);
 				}
-				if (sorted)
-				{
-					mChildren.Sort(SortByName);
-				}
+				if (sorted) mChildren.Sort(SortByName);
 			}
 			return mChildren;
 		}
 	}
 
-	private void LateUpdate()
+	/// <summary>
+	/// Positions the grid items, taking their own size into consideration.
+	/// </summary>
+
+	void RepositionVariableSize (List<Transform> children)
 	{
-		if (repositionNow)
+		float xOffset = 0;
+		float yOffset = 0;
+
+		int cols = columns > 0 ? children.Count / columns + 1 : 1;
+		int rows = columns > 0 ? columns : children.Count;
+
+		Bounds[,] bounds = new Bounds[cols, rows];
+		Bounds[] boundsRows = new Bounds[rows];
+		Bounds[] boundsCols = new Bounds[cols];
+
+		int x = 0;
+		int y = 0;
+
+		for (int i = 0, imax = children.Count; i < imax; ++i)
 		{
-			repositionNow = false;
-			Reposition();
+			Transform t = children[i];
+			Bounds b = NGUIMath.CalculateRelativeWidgetBounds(t);
+
+			Vector3 scale = t.localScale;
+			b.min = Vector3.Scale(b.min, scale);
+			b.max = Vector3.Scale(b.max, scale);
+			bounds[y, x] = b;
+
+			boundsRows[x].Encapsulate(b);
+			boundsCols[y].Encapsulate(b);
+
+			if (++x >= columns && columns > 0)
+			{
+				x = 0;
+				++y;
+			}
+		}
+
+		x = 0;
+		y = 0;
+
+		for (int i = 0, imax = children.Count; i < imax; ++i)
+		{
+			Transform t = children[i];
+			Bounds b = bounds[y, x];
+			Bounds br = boundsRows[x];
+			Bounds bc = boundsCols[y];
+
+			Vector3 pos = t.localPosition;
+			pos.x = xOffset + b.extents.x - b.center.x;
+			pos.x += b.min.x - br.min.x + padding.x;
+
+			if (direction == Direction.Down)
+			{
+				pos.y = -yOffset - b.extents.y - b.center.y;
+				pos.y += (b.max.y - b.min.y - bc.max.y + bc.min.y) * 0.5f - padding.y;
+			}
+			else
+			{
+				pos.y = yOffset + b.extents.y - b.center.y;
+				pos.y += (b.max.y - b.min.y - bc.max.y + bc.min.y) * 0.5f - padding.y;
+			}
+
+			xOffset += br.max.x - br.min.x + padding.x * 2f;
+
+			t.localPosition = pos;
+
+			if (++x >= columns && columns > 0)
+			{
+				x = 0;
+				++y;
+
+				xOffset = 0f;
+				yOffset += bc.size.y + padding.y * 2f;
+			}
 		}
 	}
 
-	public void Reposition()
+	/// <summary>
+	/// Recalculate the position of all elements within the table, sorting them alphabetically if necessary.
+	/// </summary>
+
+	public void Reposition ()
 	{
 		if (mStarted)
 		{
-			Transform target = base.transform;
+			Transform myTrans = transform;
 			mChildren.Clear();
-			List<Transform> list = children;
-			if (list.Count > 0)
-			{
-				RepositionVariableSize(list);
-			}
+			List<Transform> ch = children;
+			if (ch.Count > 0) RepositionVariableSize(ch);
+
 			if (mDrag != null)
 			{
 				mDrag.UpdateScrollbars(true);
@@ -89,94 +168,39 @@ public class UITable : MonoBehaviour
 			}
 			else if (mPanel != null)
 			{
-				mPanel.ConstrainTargetToBounds(target, true);
+				mPanel.ConstrainTargetToBounds(myTrans, true);
 			}
-			if (onReposition != null)
-			{
-				onReposition();
-			}
+			if (onReposition != null) onReposition();
 		}
-		else
-		{
-			repositionNow = true;
-		}
+		else repositionNow = true;
 	}
 
-	private void RepositionVariableSize(List<Transform> children)
-	{
-		float num = 0f;
-		float num2 = 0f;
-		int num3 = ((columns <= 0) ? 1 : (children.Count / columns + 1));
-		int num4 = ((columns <= 0) ? children.Count : columns);
-		Bounds[,] array = new Bounds[num3, num4];
-		Bounds[] array2 = new Bounds[num4];
-		Bounds[] array3 = new Bounds[num3];
-		int num5 = 0;
-		int num6 = 0;
-		int i = 0;
-		for (int count = children.Count; i < count; i++)
-		{
-			Transform transform = children[i];
-			Bounds bounds = NGUIMath.CalculateRelativeWidgetBounds(transform);
-			Vector3 localScale = transform.localScale;
-			bounds.min = Vector3.Scale(bounds.min, localScale);
-			bounds.max = Vector3.Scale(bounds.max, localScale);
-			array[num6, num5] = bounds;
-			array2[num5].Encapsulate(bounds);
-			array3[num6].Encapsulate(bounds);
-			if (++num5 >= columns && columns > 0)
-			{
-				num5 = 0;
-				num6++;
-			}
-		}
-		num5 = 0;
-		num6 = 0;
-		int j = 0;
-		for (int count2 = children.Count; j < count2; j++)
-		{
-			Transform transform2 = children[j];
-			Bounds bounds2 = array[num6, num5];
-			Bounds bounds3 = array2[num5];
-			Bounds bounds4 = array3[num6];
-			Vector3 localPosition = transform2.localPosition;
-			localPosition.x = num + bounds2.extents.x - bounds2.center.x;
-			localPosition.x += bounds2.min.x - bounds3.min.x + padding.x;
-			if (direction == Direction.Down)
-			{
-				localPosition.y = 0f - num2 - bounds2.extents.y - bounds2.center.y;
-				localPosition.y += (bounds2.max.y - bounds2.min.y - bounds4.max.y + bounds4.min.y) * 0.5f - padding.y;
-			}
-			else
-			{
-				localPosition.y = num2 + bounds2.extents.y - bounds2.center.y;
-				localPosition.y += (bounds2.max.y - bounds2.min.y - bounds4.max.y + bounds4.min.y) * 0.5f - padding.y;
-			}
-			num += bounds3.max.x - bounds3.min.x + padding.x * 2f;
-			transform2.localPosition = localPosition;
-			if (++num5 >= columns && columns > 0)
-			{
-				num5 = 0;
-				num6++;
-				num = 0f;
-				num2 += bounds4.size.y + padding.y * 2f;
-			}
-		}
-	}
+	/// <summary>
+	/// Position the grid's contents when the script starts.
+	/// </summary>
 
-	public static int SortByName(Transform a, Transform b)
-	{
-		return string.Compare(a.name, b.name);
-	}
-
-	private void Start()
+	void Start ()
 	{
 		mStarted = true;
+
 		if (keepWithinPanel)
 		{
-			mPanel = NGUITools.FindInParents<UIPanel>(base.gameObject);
-			mDrag = NGUITools.FindInParents<UIDraggablePanel>(base.gameObject);
+			mPanel = NGUITools.FindInParents<UIPanel>(gameObject);
+			mDrag = NGUITools.FindInParents<UIDraggablePanel>(gameObject);
 		}
 		Reposition();
+	}
+
+	/// <summary>
+	/// Is it time to reposition? Do so now.
+	/// </summary>
+
+	void LateUpdate ()
+	{
+		if (repositionNow)
+		{
+			repositionNow = false;
+			Reposition();
+		}
 	}
 }

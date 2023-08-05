@@ -1,63 +1,32 @@
+﻿//----------------------------------------------
+//            NGUI: Next-Gen UI kit
+// Copyright © 2011-2013 Tasharen Entertainment
+//----------------------------------------------
+
 using UnityEngine;
+
+/// <summary>
+/// This script can be used to forward events from one object to another.
+/// In most cases you should use UIEventListener script instead. For example:
+/// UIEventListener.Get(gameObject).onClick += MyClickFunction;
+/// </summary>
 
 [AddComponentMenu("NGUI/Interaction/Forward Events")]
 public class UIForwardEvents : MonoBehaviour
 {
-	public bool onClick;
-
-	public bool onDoubleClick;
-
-	public bool onDrag;
-
-	public bool onDrop;
-
-	public bool onHover;
-
-	public bool onInput;
-
-	public bool onPress;
-
-	public bool onScroll;
-
-	public bool onSelect;
-
-	public bool onSubmit;
-
 	public GameObject target;
+	public bool onHover			= false;
+	public bool onPress			= false;
+	public bool onClick			= false;
+	public bool onDoubleClick	= false;
+	public bool onSelect		= false;
+	public bool onDrag			= false;
+	public bool onDrop			= false;
+	public bool onInput			= false;
+	public bool onSubmit		= false;
+	public bool onScroll		= false;
 
-	private void OnClick()
-	{
-		if (onClick && target != null)
-		{
-			target.SendMessage("OnClick", SendMessageOptions.DontRequireReceiver);
-		}
-	}
-
-	private void OnDoubleClick()
-	{
-		if (onDoubleClick && target != null)
-		{
-			target.SendMessage("OnDoubleClick", SendMessageOptions.DontRequireReceiver);
-		}
-	}
-
-	private void OnDrag(Vector2 delta)
-	{
-		if (onDrag && target != null)
-		{
-			target.SendMessage("OnDrag", delta, SendMessageOptions.DontRequireReceiver);
-		}
-	}
-
-	private void OnDrop(GameObject go)
-	{
-		if (onDrop && target != null)
-		{
-			target.SendMessage("OnDrop", go, SendMessageOptions.DontRequireReceiver);
-		}
-	}
-
-	private void OnHover(bool isOver)
+	void OnHover (bool isOver)
 	{
 		if (onHover && target != null)
 		{
@@ -65,31 +34,31 @@ public class UIForwardEvents : MonoBehaviour
 		}
 	}
 
-	private void OnInput(string text)
-	{
-		if (onInput && target != null)
-		{
-			target.SendMessage("OnInput", text, SendMessageOptions.DontRequireReceiver);
-		}
-	}
-
-	private void OnPress(bool pressed)
+	void OnPress (bool pressed)
 	{
 		if (onPress && target != null)
 		{
 			target.SendMessage("OnPress", pressed, SendMessageOptions.DontRequireReceiver);
 		}
 	}
-
-	private void OnScroll(float delta)
+	
+	void OnClick ()
 	{
-		if (onScroll && target != null)
+		if (onClick && target != null)
 		{
-			target.SendMessage("OnScroll", delta, SendMessageOptions.DontRequireReceiver);
+			target.SendMessage("OnClick", SendMessageOptions.DontRequireReceiver);
 		}
 	}
 
-	private void OnSelect(bool selected)
+	void OnDoubleClick ()
+	{
+		if (onDoubleClick && target != null)
+		{
+			target.SendMessage("OnDoubleClick", SendMessageOptions.DontRequireReceiver);
+		}
+	}
+
+	void OnSelect (bool selected)
 	{
 		if (onSelect && target != null)
 		{
@@ -97,11 +66,43 @@ public class UIForwardEvents : MonoBehaviour
 		}
 	}
 
-	private void OnSubmit()
+	void OnDrag (Vector2 delta)
+	{
+		if (onDrag && target != null)
+		{
+			target.SendMessage("OnDrag", delta, SendMessageOptions.DontRequireReceiver);
+		}
+	}
+
+	void OnDrop (GameObject go)
+	{
+		if (onDrop && target != null)
+		{
+			target.SendMessage("OnDrop", go, SendMessageOptions.DontRequireReceiver);
+		}
+	}
+
+	void OnInput (string text)
+	{
+		if (onInput && target != null)
+		{
+			target.SendMessage("OnInput", text, SendMessageOptions.DontRequireReceiver);
+		}
+	}
+
+	void OnSubmit ()
 	{
 		if (onSubmit && target != null)
 		{
 			target.SendMessage("OnSubmit", SendMessageOptions.DontRequireReceiver);
+		}
+	}
+
+	void OnScroll (float delta)
+	{
+		if (onScroll && target != null)
+		{
+			target.SendMessage("OnScroll", delta, SendMessageOptions.DontRequireReceiver);
 		}
 	}
 }

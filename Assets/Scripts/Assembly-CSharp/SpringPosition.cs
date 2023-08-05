@@ -1,95 +1,133 @@
+﻿//----------------------------------------------
+//            NGUI: Next-Gen UI kit
+// Copyright © 2011-2013 Tasharen Entertainment
+//----------------------------------------------
+
 using UnityEngine;
+
+/// <summary>
+/// Spring-like motion -- the farther away the object is from the target, the stronger the pull.
+/// </summary>
 
 [AddComponentMenu("NGUI/Tween/Spring Position")]
 public class SpringPosition : IgnoreTimeScale
 {
-	public delegate void OnFinished(SpringPosition spring);
+	public delegate void OnFinished (SpringPosition spring);
 
-	public string callWhenFinished;
-
-	public GameObject eventReceiver;
-
-	public bool ignoreTimeScale;
-
-	private float mThreshold;
-
-	private Transform mTrans;
-
-	public OnFinished onFinished;
-
-	public float strength = 10f;
+	/// <summary>
+	/// Target position to tween to.
+	/// </summary>
 
 	public Vector3 target = Vector3.zero;
 
-	public bool worldSpace;
+	/// <summary>
+	/// How strong is the pull of the spring. Higher value means it gets to the target faster.
+	/// </summary>
 
-	public static SpringPosition Begin(GameObject go, Vector3 pos, float strength)
-	{
-		SpringPosition springPosition = go.GetComponent<SpringPosition>();
-		if (springPosition == null)
-		{
-			springPosition = go.AddComponent<SpringPosition>();
-		}
-		springPosition.target = pos;
-		springPosition.strength = strength;
-		springPosition.onFinished = null;
-		if (!springPosition.enabled)
-		{
-			springPosition.mThreshold = 0f;
-			springPosition.enabled = true;
-		}
-		return springPosition;
-	}
+	public float strength = 10f;
 
-	private void Start()
-	{
-		mTrans = base.transform;
-	}
+	/// <summary>
+	/// Is the calculation done in world space or local space?
+	/// </summary>
 
-	private void Update()
+	public bool worldSpace = false;
+
+	/// <summary>
+	/// Whether the time scale will be ignored. Generally UI components should set it to 'true'.
+	/// </summary>
+
+	public bool ignoreTimeScale = false;
+
+	/// <summary>
+	/// Game object on which to call the callback function.
+	/// </summary>
+
+	public GameObject eventReceiver;
+
+	/// <summary>
+	/// Function to call when the spring finishes moving.
+	/// </summary>
+
+	public string callWhenFinished;
+
+	/// <summary>
+	/// Delegate to trigger when the spring finishes.
+	/// </summary>
+
+	public OnFinished onFinished;
+
+	Transform mTrans;
+	float mThreshold = 0f;
+
+	/// <summary>
+	/// Cache the transform.
+	/// </summary>
+
+	void Start () { mTrans = transform; }
+
+	/// <summary>
+	/// Advance toward the target position.
+	/// </summary>
+
+	void Update ()
 	{
-		float deltaTime = ((!ignoreTimeScale) ? Time.deltaTime : UpdateRealTimeDelta());
+		float delta = ignoreTimeScale ? UpdateRealTimeDelta() : Time.deltaTime;
+
 		if (worldSpace)
 		{
-			if (mThreshold == 0f)
-			{
-				mThreshold = (target - mTrans.position).magnitude * 0.001f;
-			}
-			mTrans.position = NGUIMath.SpringLerp(mTrans.position, target, strength, deltaTime);
-			Vector3 vector = target - mTrans.position;
-			if (mThreshold >= vector.magnitude)
+			if (mThreshold == 0f) mThreshold = (target - mTrans.position).magnitude * 0.001f;
+			mTrans.position = NGUIMath.SpringLerp(mTrans.position, target, strength, delta);
+
+			if (mThreshold >= (target - mTrans.position).magnitude)
 			{
 				mTrans.position = target;
-				if (onFinished != null)
-				{
-					onFinished(this);
-				}
+				
+				if (onFinished != null) onFinished(this);
+				
 				if (eventReceiver != null && !string.IsNullOrEmpty(callWhenFinished))
 				{
 					eventReceiver.SendMessage(callWhenFinished, this, SendMessageOptions.DontRequireReceiver);
 				}
-				base.enabled = false;
+				enabled = false;
 			}
-			return;
 		}
-		if (mThreshold == 0f)
+		else
 		{
-			mThreshold = (target - mTrans.localPosition).magnitude * 0.001f;
+			if (mThreshold == 0f) mThreshold = (target - mTrans.localPosition).magnitude * 0.001f;
+			mTrans.localPosition = NGUIMath.SpringLerp(mTrans.localPosition, target, strength, delta);
+
+			if (mThreshold >= (target - mTrans.localPosition).magnitude)
+			{
+				mTrans.localPosition = target;
+				
+				if (onFinished != null) onFinished(this);
+
+				if (eventReceiver != null && !string.IsNullOrEmpty(callWhenFinished))
+				{
+					eventReceiver.SendMessage(callWhenFinished, this, SendMessageOptions.DontRequireReceiver);
+				}
+				enabled = false;
+			}
 		}
-		mTrans.localPosition = NGUIMath.SpringLerp(mTrans.localPosition, target, strength, deltaTime);
-		Vector3 vector2 = target - mTrans.localPosition;
-		if (mThreshold >= vector2.magnitude)
+	}
+
+	/// <summary>
+	/// Start the tweening process.
+	/// </summary>
+
+	static public SpringPosition Begin (GameObject go, Vector3 pos, float strength)
+	{
+		SpringPosition sp = go.GetComponent<SpringPosition>();
+		if (sp == null) sp = go.AddComponent<SpringPosition>();
+		sp.target = pos;
+		sp.strength = strength;
+		sp.onFinished = null;
+
+		if (!sp.enabled)
 		{
-			mTrans.localPosition = target;
-			if (onFinished != null)
-			{
-				onFinished(this);
-			}
-			if (eventReceiver != null && !string.IsNullOrEmpty(callWhenFinished))
-			{
-				eventReceiver.SendMessage(callWhenFinished, this, SendMessageOptions.DontRequireReceiver);
-			}
-			base.enabled = false;
+			sp.mThreshold = 0f;
+			sp.enabled = true;
 		}
+		return sp;
 	}
 }

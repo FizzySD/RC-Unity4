@@ -1,82 +1,84 @@
+﻿//----------------------------------------------
+//            NGUI: Next-Gen UI kit
+// Copyright © 2011-2013 Tasharen Entertainment
+//----------------------------------------------
+
 using UnityEngine;
+
+/// <summary>
+/// Tween the object's color.
+/// </summary>
 
 [AddComponentMenu("NGUI/Tween/Color")]
 public class TweenColor : UITweener
 {
 	public Color from = Color.white;
-
-	private Light mLight;
-
-	private Material mMat;
-
-	private Transform mTrans;
-
-	private UIWidget mWidget;
-
 	public Color to = Color.white;
+
+	Transform mTrans;
+	UIWidget mWidget;
+	Material mMat;
+	Light mLight;
+
+	/// <summary>
+	/// Current color.
+	/// </summary>
 
 	public Color color
 	{
 		get
 		{
-			if (mWidget != null)
-			{
-				return mWidget.color;
-			}
-			if (mLight != null)
-			{
-				return mLight.color;
-			}
-			if (mMat != null)
-			{
-				return mMat.color;
-			}
+			if (mWidget != null) return mWidget.color;
+			if (mLight != null) return mLight.color;
+			if (mMat != null) return mMat.color;
 			return Color.black;
 		}
 		set
 		{
-			if (mWidget != null)
-			{
-				mWidget.color = value;
-			}
-			if (mMat != null)
-			{
-				mMat.color = value;
-			}
+			if (mWidget != null) mWidget.color = value;
+			if (mMat != null) mMat.color = value;
+
 			if (mLight != null)
 			{
 				mLight.color = value;
-				mLight.enabled = value.r + value.g + value.b > 0.01f;
+				mLight.enabled = (value.r + value.g + value.b) > 0.01f;
 			}
 		}
 	}
 
-	private void Awake()
+	/// <summary>
+	/// Find all needed components.
+	/// </summary>
+
+	void Awake ()
 	{
 		mWidget = GetComponentInChildren<UIWidget>();
-		Renderer renderer = base.renderer;
-		if (renderer != null)
-		{
-			mMat = renderer.material;
-		}
-		mLight = base.light;
+		Renderer ren = renderer;
+		if (ren != null) mMat = ren.material;
+		mLight = light;
 	}
 
-	public static TweenColor Begin(GameObject go, float duration, Color color)
+	/// <summary>
+	/// Interpolate and update the color.
+	/// </summary>
+
+	protected override void OnUpdate(float factor, bool isFinished) { color = Color.Lerp(from, to, factor); }
+
+	/// <summary>
+	/// Start the tweening operation.
+	/// </summary>
+
+	static public TweenColor Begin (GameObject go, float duration, Color color)
 	{
-		TweenColor tweenColor = UITweener.Begin<TweenColor>(go, duration);
-		tweenColor.from = tweenColor.color;
-		tweenColor.to = color;
+		TweenColor comp = UITweener.Begin<TweenColor>(go, duration);
+		comp.from = comp.color;
+		comp.to = color;
+
 		if (duration <= 0f)
 		{
-			tweenColor.Sample(1f, true);
-			tweenColor.enabled = false;
+			comp.Sample(1f, true);
+			comp.enabled = false;
 		}
-		return tweenColor;
-	}
-
-	protected override void OnUpdate(float factor, bool isFinished)
-	{
-		color = Color.Lerp(from, to, factor);
+		return comp;
 	}
 }

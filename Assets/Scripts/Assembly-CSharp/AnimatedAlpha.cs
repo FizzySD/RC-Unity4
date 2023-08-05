@@ -1,29 +1,31 @@
+﻿//----------------------------------------------
+//            NGUI: Next-Gen UI kit
+// Copyright © 2011-2013 Tasharen Entertainment
+//----------------------------------------------
+
 using UnityEngine;
+
+/// <summary>
+/// Makes it possible to animate alpha of the widget or a panel.
+/// </summary>
 
 public class AnimatedAlpha : MonoBehaviour
 {
 	public float alpha = 1f;
 
-	private UIPanel mPanel;
-
-	private UIWidget mWidget;
-
-	private void Awake()
+	UIWidget mWidget;
+	UIPanel mPanel;
+	
+	void Awake ()
 	{
 		mWidget = GetComponent<UIWidget>();
 		mPanel = GetComponent<UIPanel>();
 		Update();
 	}
 
-	private void Update()
+	void Update ()
 	{
-		if (mWidget != null)
-		{
-			mWidget.alpha = alpha;
-		}
-		if (mPanel != null)
-		{
-			mPanel.alpha = alpha;
-		}
+		if (mWidget != null) mWidget.alpha = alpha;
+		if (mPanel != null) mPanel.alpha = alpha;
 	}
 }

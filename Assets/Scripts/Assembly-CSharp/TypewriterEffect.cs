@@ -1,3 +1,4 @@
+/*
 using UnityEngine;
 
 [RequireComponent(typeof(UILabel))]
@@ -48,3 +49,4 @@ public class TypewriterEffect : MonoBehaviour
 		}
 	}
 }
+*/

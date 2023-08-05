@@ -1,83 +1,56 @@
+//----------------------------------------------
+//            NGUI: Next-Gen UI kit
+// Copyright © 2011-2013 Tasharen Entertainment
+//----------------------------------------------
+
 using UnityEngine;
 
-[ExecuteInEditMode]
+/// <summary>
+/// Sample script showing how easy it is to implement a standard button that swaps sprites.
+/// </summary>
+
 [AddComponentMenu("NGUI/UI/Image Button")]
 public class UIImageButton : MonoBehaviour
 {
-	public string disabledSprite;
-
-	public string hoverSprite;
-
-	public string normalSprite;
-
-	public string pressedSprite;
-
 	public UISprite target;
-
+	public string normalSprite;
+	public string hoverSprite;
+	public string pressedSprite;
+	public string disabledSprite;
+	
 	public bool isEnabled
 	{
 		get
 		{
-			Collider collider = base.collider;
-			if (collider != null)
-			{
-				return collider.enabled;
-			}
-			return false;
+			Collider col = collider;
+			return col && col.enabled;
 		}
 		set
 		{
-			Collider collider = base.collider;
-			if (collider != null && collider.enabled != value)
+			Collider col = collider;
+			if (!col) return;
+
+			if (col.enabled != value)
 			{
-				collider.enabled = value;
+				col.enabled = value;
 				UpdateImage();
 			}
 		}
 	}
 
-	private void Awake()
+	void OnEnable ()
 	{
-		if (target == null)
-		{
-			target = GetComponentInChildren<UISprite>();
-		}
-	}
-
-	private void OnEnable()
-	{
+		if (target == null) target = GetComponentInChildren<UISprite>();
 		UpdateImage();
 	}
-
-	private void OnHover(bool isOver)
-	{
-		if (isEnabled && target != null)
-		{
-			target.spriteName = ((!isOver) ? normalSprite : hoverSprite);
-			target.MakePixelPerfect();
-		}
-	}
-
-	private void OnPress(bool pressed)
-	{
-		if (pressed)
-		{
-			target.spriteName = pressedSprite;
-			target.MakePixelPerfect();
-		}
-		else
-		{
-			UpdateImage();
-		}
-	}
-
-	private void UpdateImage()
+	
+	void UpdateImage()
 	{
 		if (target != null)
 		{
 			if (isEnabled)
 			{
-				target.spriteName = ((!UICamera.IsHighlighted(base.gameObject)) ? normalSprite : hoverSprite);
+				target.spriteName = UICamera.IsHighlighted(gameObject) ? hoverSprite : normalSprite;
 			}
 			else
 			{
@@ -85,5 +58,24 @@ public class UIImageButton : MonoBehaviour
 			}
 			target.MakePixelPerfect();
 		}
+	}
+
+	void OnHover (bool isOver)
+	{
+		if (isEnabled && target != null)
+		{
+			target.spriteName = isOver ? hoverSprite : normalSprite;
+			target.MakePixelPerfect();
+		}
+	}
+
+	void OnPress (bool pressed)
+	{
+		if (pressed)
+		{
+			target.spriteName = pressedSprite;
+			target.MakePixelPerfect();
+		}
+		else UpdateImage();
 	}
 }
