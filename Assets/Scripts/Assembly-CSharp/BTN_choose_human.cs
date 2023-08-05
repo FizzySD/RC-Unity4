@@ -43,7 +43,7 @@ public class BTN_choose_human : MonoBehaviour
 
 	private void OnClick()
 	{
-		string selection = GameObject.Find("PopupListCharacterHUMAN").GetComponent<UIPopupList>().selection;
+		string selection = "LEVI";
 		NGUITools.SetActive(GameObject.Find("UI_IN_GAME").GetComponent<UIReferArray>().panels[0], true);
 		GameObject.Find("MultiplayerManager").GetComponent<FengGameManagerMKII>().needChooseSide = false;
 		if (IN_GAME_MAIN_CAMERA.gamemode == GAMEMODE.PVP_CAPTURE)
