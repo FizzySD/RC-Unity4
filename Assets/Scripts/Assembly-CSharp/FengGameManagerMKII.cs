@@ -9513,6 +9513,7 @@ internal class FengGameManagerMKII : Photon.MonoBehaviour
 		gameObject2.transform.parent = gameObject.GetComponent<UIReferArray>().panels[0].transform;
 		gameObject2.GetComponent<KillInfoComponent>().show(t1, killer, t2, victim, dmg);
 		killInfoGO.Add(gameObject2);
+		logger.addLINE("Killed a titan for " + dmg);
 		ReportKillToChatFeed(killer, victim, dmg);
 	}
 
