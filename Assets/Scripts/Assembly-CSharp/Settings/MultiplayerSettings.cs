@@ -9,7 +9,7 @@ namespace Settings
 
 		public static string PrivateLobby = "verified343";
 
-		public static string PublicAppId = "5578b046-8264-438c-99c5-fb15c71b6744";
+		public static string PublicAppId = "e3341a7b-1cb9-4b6c-90e4-39b796e52876";
 
 		public IntSetting LobbyMode = new IntSetting(0);
 
@@ -31,11 +31,11 @@ namespace Settings
 		{
 			{
 				MultiplayerRegion.EU,
-				"app-eu.exitgamescloud.com"
+				"app-eu.exitgames.com"
 			},
 			{
 				MultiplayerRegion.US,
-				"app-us.exitgamescloud.com"
+				"app-us.exitgames.com"
 			},
 			{
 				MultiplayerRegion.SA,
@@ -43,7 +43,7 @@ namespace Settings
 			},
 			{
 				MultiplayerRegion.ASIA,
-				"app-asia.exitgamescloud.com"
+				"app-asia.exitgames.com"
 			}
 		};
 
@@ -51,20 +51,20 @@ namespace Settings
 		{
 			{
 				MultiplayerRegion.EU,
-				"135.125.239.180"
-			},
+                "app-eu.exitgames.com"
+            },
 			{
 				MultiplayerRegion.US,
-				"142.44.242.29"
-			},
+                "app-us.exitgames.com"
+            },
 			{
 				MultiplayerRegion.SA,
-				"172.107.193.233"
-			},
+                "app-sa.exitgames.com"
+            },
 			{
 				MultiplayerRegion.ASIA,
-				"51.79.164.137"
-			}
+                "app-asia.exitgames.com"
+            }
 		};
 
 		public readonly int DefaultPort = 5055;
@@ -88,12 +88,12 @@ namespace Settings
 			if (AppIdMode.Value == 0)
 			{
 				string masterServerAddress = PublicAddresses[region];
-				CurrentMultiplayerServerType = MultiplayerServerType.Public;
-				PhotonNetwork.ConnectToMaster(masterServerAddress, DefaultPort, string.Empty, GetCurrentLobby());
+				CurrentMultiplayerServerType = MultiplayerServerType.Cloud;
+				PhotonNetwork.ConnectToMaster(masterServerAddress, DefaultPort, PublicAppId, GetCurrentLobby());
 			}
 			else
 			{
-				string masterServerAddress = CloudAddresses[region];
+				string masterServerAddress = PublicAddresses[region];
 				CurrentMultiplayerServerType = MultiplayerServerType.Cloud;
 				PhotonNetwork.ConnectToMaster(masterServerAddress, DefaultPort, CustomAppId.Value, GetCurrentLobby());
 			}
